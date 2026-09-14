@@ -1,0 +1,19 @@
+{
+  "name": "In Case — The Family Emergency Binder",
+  "short_name": "In Case",
+  "description": "Everything your family would need to know, kept privately on your own device.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FDF9F0",
+  "theme_color": "#FDF9F0",
+  "categories": ["productivity", "lifestyle", "utilities"],
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

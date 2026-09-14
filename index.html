@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>In Case — The Family Emergency Binder</title>
+<meta name="description" content="Everything your family would need to know, kept privately on your own device.">
+<style>
+/* ============================================================
+   In Case — DreamsToDone
+   Four selectable palettes, each with a light and dark build.
+   Colour tokens below are the default (Butter & Ink, light);
+   PALETTES in the script overrides them at runtime.
+   ============================================================ */
+:root{
+  --paper:#FBF7F0; --paper-2:#F4EDE2; --surface:#FFFFFF;
+  --ink:#2E2A26; --ink-soft:#544D45; --muted:#7A7065;
+  --line:#E7DECF; --line-soft:#F0E8DA;
+  --brand:#2B2721; --brand-deep:#14110E; --brand-wash:#F1EADC; --on-brand:#FDF9F0;
+  --accent:#B07A18; --accent-wash:#FBF0D8;
+  --gold:#E3B23C;
+  --danger:#A33A2B; --danger-wash:#FBEAE7;
+  --shadow:0 1px 2px rgba(46,42,38,.05), 0 8px 24px -12px rgba(46,42,38,.18);
+  --shadow-lg:0 2px 6px rgba(46,42,38,.06), 0 24px 48px -20px rgba(46,42,38,.28);
+  --r:14px; --r-sm:10px; --r-lg:20px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --maxw:900px;
+}
+:root[data-theme="dark"]{
+  --paper:#1B1A18; --paper-2:#221F1C; --surface:#262320;
+  --ink:#F0EAE1; --ink-soft:#D6CEC2; --muted:#A79D91;
+  --line:#3A3630; --line-soft:#2F2C27;
+  --brand:#E3B23C; --brand-deep:#F0C868; --brand-wash:#2A2418; --on-brand:#1A1710;
+  --accent:#D98E5A; --accent-wash:#2B2118;
+  --gold:#E3B23C;
+  --danger:#E8877A; --danger-wash:#332321;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.35), 0 24px 48px -20px rgba(0,0,0,.7);
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.55;
+  min-height:100vh; min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  padding-top:env(safe-area-inset-top);
+}
+h1,h2,h3,h4{font-family:var(--serif); font-weight:600; line-height:1.22; margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--brand-deep)}
+:focus-visible{outline:2.5px solid var(--accent); outline-offset:2px; border-radius:4px}
+
+/* ---------- App shell ---------- */
+.app{display:flex; flex-direction:column; min-height:100vh; min-height:100dvh}
+
+.topbar{
+  position:sticky; top:0; z-index:60;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:calc(env(safe-area-inset-top) * 0) 0;
+}
+.topbar-in{
+  max-width:1180px; margin:0 auto; padding:10px 16px;
+  display:flex; align-items:center; gap:12px;
+}
+.brand{display:flex; align-items:center; gap:10px; min-width:0}
+.mark{
+  width:34px;height:34px;border-radius:10px;flex:none;
+  background:linear-gradient(150deg,var(--brand) 0%, var(--brand-deep) 100%);
+  display:grid;place-items:center;color:var(--on-brand);
+  box-shadow:0 2px 8px -3px rgba(0,0,0,.35);
+}
+.mark svg{width:19px;height:19px;display:block}
+.brand-t{min-width:0}
+.brand-t b{font-family:var(--serif);font-size:17px;font-weight:600;display:block;letter-spacing:.01em}
+.brand-t span{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.spacer{flex:1}
+
+.iconbtn{
+  border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+  height:38px; min-width:38px; padding:0 10px; border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  cursor:pointer; font-size:13.5px; font-weight:550;
+  transition:background .15s, border-color .15s, transform .1s;
+}
+.iconbtn:hover{background:var(--paper-2); border-color:var(--muted)}
+.iconbtn:active{transform:translateY(1px)}
+.iconbtn svg{width:17px;height:17px;flex:none}
+.iconbtn .lbl{display:none}
+@media(min-width:760px){ .iconbtn .lbl{display:inline} }
+.iconbtn.primary{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.iconbtn.primary:hover{background:var(--brand-deep);border-color:var(--brand-deep)}
+
+/* Below 700px the controls take priority over the wordmark — the logo mark
+   carries the identity and every button stays a comfortable 42px. */
+@media(max-width:700px){
+  .topbar-in{gap:6px;padding:9px 12px}
+  .brand-t{display:none}
+  .mark{width:34px;height:34px;border-radius:10px}
+  .iconbtn{height:42px;min-width:42px;padding:0 9px}
+}
+.iconbtn,.langtog,.mark{flex:none}
+.langtog{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;height:38px;background:var(--surface)}
+.langtog button{border:0;background:transparent;padding:0 10px;cursor:pointer;font-size:12.5px;font-weight:650;color:var(--muted);letter-spacing:.03em;
+  height:100%;display:flex;align-items:center;justify-content:center}
+.langtog button[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
+@media(max-width:700px){ .langtog{height:42px} .langtog button{padding:0 11px;font-size:13px} }
+/* Any touch device — including tablets wide enough to get the desktop layout */
+@media(pointer:coarse){
+  .iconbtn{height:42px;min-width:42px}
+  .langtog{height:42px}
+  .navlist button{padding:13px}
+  .secnav button{padding:14px}
+}
+
+/* ---------- Banners ---------- */
+.banners{max-width:1180px;margin:0 auto;padding:0 16px}
+.banner{
+  display:flex;gap:12px;align-items:flex-start;
+  border-radius:var(--r-sm); padding:12px 14px; margin-top:12px;
+  font-size:14px; line-height:1.5; border:1px solid;
+}
+.banner svg{width:18px;height:18px;flex:none;margin-top:1px}
+.banner b{display:block;margin-bottom:2px}
+.banner.warn{background:var(--accent-wash);border-color:color-mix(in srgb,var(--accent) 35%,transparent);color:var(--ink)}
+.banner.warn svg{color:var(--accent)}
+.banner.info{background:var(--brand-wash);border-color:color-mix(in srgb,var(--brand) 32%,transparent)}
+.banner.info svg{color:var(--brand-deep)}
+.banner.stop{background:var(--danger-wash);border-color:color-mix(in srgb,var(--danger) 38%,transparent)}
+.banner.stop svg{color:var(--danger)}
+.banner .x{margin-left:auto;background:none;border:0;cursor:pointer;color:var(--muted);font-size:19px;line-height:1;padding:0 2px}
+.banner .act{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.banner .act button{
+  border:1px solid currentColor;background:transparent;color:var(--ink);
+  border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;
+}
+.banner .act button:hover{background:color-mix(in srgb,var(--ink) 7%,transparent)}
+
+/* ---------- Body layout ---------- */
+.body{max-width:1180px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:22px;width:100%;flex:1}
+@media(min-width:1000px){ .body{grid-template-columns:266px 1fr; align-items:start} }
+
+/* ---------- Sidebar ---------- */
+.side{display:none}
+@media(min-width:1000px){
+  .side{display:block;position:sticky;top:76px}
+}
+.progcard{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow);margin-bottom:14px;
+}
+.progtop{display:flex;align-items:center;gap:13px}
+.ring{width:56px;height:56px;flex:none;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.ring .bg{stroke:var(--line)}
+.ring .fg{stroke:var(--brand);transition:stroke-dasharray .5s ease}
+.progtop .pt b{display:block;font-family:var(--serif);font-size:21px;line-height:1.1}
+.progtop .pt span{font-size:12.5px;color:var(--muted)}
+.navlist{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.navlist li+li{border-top:1px solid var(--line-soft)}
+.navlist button{
+  width:100%;text-align:left;border:0;background:none;cursor:pointer;
+  padding:10px 13px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft);
+}
+.navlist button:hover{background:var(--paper-2)}
+.navlist button[aria-current="true"]{background:var(--brand-wash);color:var(--ink);font-weight:600;box-shadow:inset 3px 0 0 var(--brand)}
+.navnum{
+  width:23px;height:23px;border-radius:7px;flex:none;display:grid;place-items:center;
+  font-size:11.5px;font-weight:700;background:var(--paper-2);color:var(--muted);
+}
+.navlist button[aria-current="true"] .navnum{background:var(--brand);color:var(--on-brand)}
+.navdot{margin-left:auto;width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.navdot.part{background:var(--gold)}
+.navdot.done{background:var(--brand)}
+
+/* ---------- Mobile section picker ---------- */
+.mobpick{display:block;margin-bottom:4px}
+@media(min-width:1000px){ .mobpick{display:none} }
+.mobpick .row{display:flex;gap:10px;align-items:center}
+.mobpick select{
+  flex:1;appearance:none;-webkit-appearance:none;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:11px 34px 11px 13px;font-size:15px;font-weight:600;width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A7065' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;background-size:16px;
+}
+.minibar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:10px}
+.minibar i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .45s ease}
+
+/* ---------- Section ---------- */
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden}
+.sec-h{padding:20px 20px 16px;border-bottom:1px solid var(--line-soft);background:linear-gradient(180deg,var(--paper-2) 0%, var(--surface) 100%)}
+.eyebrow{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-deep);font-weight:700}
+.sec-h h2{font-size:clamp(21px,4.4vw,27px);margin:5px 0 0}
+.sec-h p{margin:9px 0 0;color:var(--muted);font-size:14.5px;max-width:62ch}
+.sec-b{padding:18px 20px 22px}
+@media(max-width:520px){ .sec-h{padding:17px 15px 14px} .sec-b{padding:15px 15px 19px} }
+
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13.5px;font-weight:650;margin-bottom:5px;color:var(--ink-soft)}
+.field .hint{font-size:12.5px;color:var(--muted);margin:0 0 6px;line-height:1.45}
+.inp{
+  width:100%;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-sm);
+  padding:11px 12px;font-size:15.5px;transition:border-color .15s, background .15s;
+}
+.inp::placeholder{color:color-mix(in srgb,var(--muted) 70%,transparent)}
+.inp:hover{border-color:color-mix(in srgb,var(--muted) 55%,transparent)}
+.inp:focus{border-color:var(--brand);background:var(--surface);outline:none;box-shadow:0 0 0 3.5px var(--brand-wash)}
+textarea.inp{min-height:88px;resize:vertical;line-height:1.55}
+select.inp{appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A7065' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;background-size:16px;padding-right:36px}
+.grid2{display:grid;gap:0 16px}
+@media(min-width:640px){ .grid2{grid-template-columns:1fr 1fr} .grid2 .full{grid-column:1/-1} }
+
+/* ---------- Repeatable entries ---------- */
+.entry{border:1.5px solid var(--line);border-radius:var(--r);padding:15px;margin-bottom:13px;background:var(--paper)}
+.entry-h{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.entry-h b{font-family:var(--serif);font-size:15.5px;font-weight:600}
+.entry-h .n{
+  width:24px;height:24px;border-radius:8px;background:var(--brand-wash);color:var(--brand-deep);
+  display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;
+}
+.del{margin-left:auto;border:0;background:none;cursor:pointer;color:var(--muted);
+  width:40px;height:40px;border-radius:10px;display:grid;place-items:center;flex:none}
+.del:hover{background:var(--danger-wash);color:var(--danger)}
+.del svg{width:18px;height:18px}
+.del.confirm{background:var(--danger);color:#fff;width:auto;padding:0 12px;font-size:13px;font-weight:650;gap:6px;grid-auto-flow:column}
+.addbtn{
+  width:100%;border:1.5px dashed color-mix(in srgb,var(--brand) 50%,var(--line));
+  background:transparent;color:var(--brand-deep);border-radius:var(--r);
+  padding:12px;cursor:pointer;font-size:14.5px;font-weight:650;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.addbtn:hover{background:var(--brand-wash);border-style:solid}
+.addbtn svg{width:17px;height:17px}
+.empty{text-align:center;color:var(--muted);font-size:14px;padding:14px 8px 18px}
+
+.note{
+  display:flex;gap:10px;background:var(--brand-wash);border:1px solid color-mix(in srgb,var(--brand) 28%,transparent);
+  border-radius:var(--r-sm);padding:12px 13px;font-size:13.5px;line-height:1.5;margin-bottom:18px;color:var(--ink-soft);
+}
+.note svg{width:17px;height:17px;flex:none;margin-top:1px;color:var(--brand-deep)}
+.note.care{background:var(--accent-wash);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+.note.care svg{color:var(--accent)}
+
+.secnav{display:flex;gap:10px;margin-top:22px}
+.secnav button{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-sm);padding:12px;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink-soft)}
+.secnav button:hover:not(:disabled){background:var(--paper-2);border-color:var(--muted)}
+.secnav button:disabled{opacity:.4;cursor:default}
+
+/* ---------- Footer ---------- */
+.foot{border-top:1px solid var(--line);background:var(--paper-2);padding:26px 16px calc(26px + env(safe-area-inset-bottom))}
+.foot-in{max-width:1180px;margin:0 auto;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.foot p{margin:0;font-size:13px;color:var(--muted);max-width:52ch}
+.foot .shop{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);display:block;margin-bottom:3px}
+.foot a{color:var(--brand-deep);font-weight:600;text-decoration:none;border-bottom:1.5px solid color-mix(in srgb,var(--brand) 40%,transparent);
+  display:inline-block;padding:9px 0}
+.foot a:hover{border-bottom-color:var(--brand)}
+
+/* ---------- Modal ---------- */
+.mask{position:fixed;inset:0;background:rgba(30,26,22,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:100;display:grid;place-items:center;padding:16px}
+.modal{background:var(--surface);border-radius:var(--r-lg);max-width:520px;width:100%;box-shadow:var(--shadow-lg);max-height:88vh;overflow:auto;border:1px solid var(--line)}
+.modal-h{padding:20px 20px 0}
+.modal-h h3{font-size:20px}
+.modal-b{padding:14px 20px 20px}
+.modal-b p{color:var(--ink-soft);font-size:14.5px;line-height:1.55;margin:0 0 13px}
+.modal-f{display:flex;gap:10px;padding:0 20px 20px;flex-wrap:wrap}
+.modal-f button{flex:1;min-width:130px;border-radius:var(--r-sm);padding:12px;cursor:pointer;font-size:14.5px;font-weight:650;border:1px solid var(--line);background:var(--surface)}
+.modal-f button.go{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.modal-f button.bad{background:var(--danger);border-color:var(--danger);color:var(--on-brand)}
+
+/* ---------- Short version / Everything ---------- */
+/* The short version is one continuous page — no section list, no paging. */
+:root[data-mode="short"] .navlist,
+:root[data-mode="short"] .mobpick .row,
+:root[data-mode="short"] .secnav{display:none}
+:root[data-mode="short"] .side{position:static}
+.grp{
+  margin:30px 0 15px;padding-top:20px;border-top:1px solid var(--line-soft);
+  font-family:var(--serif);font-size:18.5px;font-weight:600;display:flex;align-items:center;gap:9px;
+}
+.grp:first-child{margin-top:0;padding-top:0;border-top:0}
+.grp .gn{
+  width:24px;height:24px;border-radius:8px;flex:none;display:grid;place-items:center;
+  font-family:var(--sans);font-size:11.5px;font-weight:700;background:var(--brand-wash);color:var(--brand-deep);
+}
+
+.modeswitch{display:flex;gap:8px;margin-bottom:14px}
+.modeswitch button{
+  flex:1;border:1.5px solid var(--line);background:var(--surface);border-radius:var(--r);
+  padding:10px 12px;cursor:pointer;text-align:left;transition:border-color .15s,background .15s;
+}
+.modeswitch button:hover{border-color:var(--muted)}
+.modeswitch button[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-wash)}
+.modeswitch b{display:block;font-family:var(--sans);font-size:14px;font-weight:650}
+.modeswitch span{display:block;font-size:12px;color:var(--muted);margin-top:1px;line-height:1.35}
+@media(max-width:520px){ .modeswitch span{display:none} .modeswitch button{padding:11px;text-align:center} }
+
+/* ---------- Search ---------- */
+.searchbox{width:100%;margin-bottom:4px}
+.sresults{max-height:min(52vh,420px);overflow:auto;margin-top:12px;border-top:1px solid var(--line-soft)}
+.sresult{
+  display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line-soft);
+  background:none;cursor:pointer;padding:11px 4px;
+}
+.sresult:hover{background:var(--paper-2)}
+.sresult .lb{font-size:13.5px;font-weight:650;display:block}
+.sresult .vl{font-size:13px;color:var(--ink-soft);display:block;margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sresult .wh{font-size:11.5px;color:var(--muted);display:block;margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+.sresult mark{background:var(--brand-wash);color:var(--ink);border-radius:3px;padding:0 2px;font-weight:700}
+.hit{animation:hit 1.6s ease}
+@keyframes hit{ 0%,70%{box-shadow:0 0 0 3.5px var(--brand-wash);border-color:var(--brand)} 100%{} }
+
+/* ---------- Palette picker ---------- */
+.seglab{display:block;font-size:13px;font-weight:650;color:var(--ink-soft);margin-bottom:6px}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:var(--r-sm);overflow:hidden;margin-bottom:16px}
+.seg button{flex:1;border:0;border-right:1px solid var(--line);background:var(--surface);
+  padding:10px 6px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink-soft)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--brand);color:var(--on-brand)}
+/* Below 520px the standalone theme button gives up its slot — light/dark
+   lives in the colour panel, which keeps the header inside a 320px screen. */
+@media(max-width:519px){
+  #themeBtn{display:none}
+  .topbar-in{gap:5px;padding:9px 10px}
+  .iconbtn{height:40px;min-width:40px;padding:0 8px}
+  .langtog{height:42px}
+  .langtog button{padding:0 9px;font-size:12.5px}
+  .mark{width:30px;height:30px;border-radius:9px}
+}
+
+.palgrid{display:grid;gap:11px;grid-template-columns:1fr}
+@media(min-width:440px){ .palgrid{grid-template-columns:1fr 1fr} }
+.palcard{
+  border:1.5px solid var(--line);border-radius:var(--r);padding:12px;cursor:pointer;
+  background:var(--surface);text-align:left;display:block;width:100%;
+  transition:border-color .15s, transform .1s;
+}
+.palcard:hover{border-color:var(--muted)}
+.palcard:active{transform:translateY(1px)}
+.palcard[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-wash)}
+.palcard .sw{display:flex;gap:0;border-radius:8px;overflow:hidden;height:34px;margin-bottom:9px;border:1px solid var(--line)}
+.palcard .sw i{flex:1;display:block}
+.palcard .nm{font-size:14px;font-weight:650;display:flex;align-items:center;gap:6px}
+.palcard .nm .tick{color:var(--brand);font-size:13px}
+.palcard .ds{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:24px;z-index:200;
+  background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:99px;font-size:14px;font-weight:600;
+  box-shadow:var(--shadow-lg);opacity:0;transition:opacity .25s, transform .25s;pointer-events:none;max-width:90vw;text-align:center;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.savedot{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.savedot i{width:8px;height:8px;border-radius:50%;background:var(--brand);display:block;flex:none}
+@media(max-width:759px){ .savedot span{display:none} .savedot{gap:0} }
+
+/* ---------- Print ---------- */
+#print{display:none}
+@media print{
+  @page{margin:16mm 14mm}
+  body{background:#fff;color:#000;font-size:11pt}
+  .app,.toast,.mask,#modalHost{display:none !important}
+  #print{display:block !important}
+  .p-cover{text-align:center;padding:38mm 0 0;page-break-after:always}
+  .p-cover h1{font-size:30pt;margin:0 0 6mm;letter-spacing:.01em}
+  .p-cover .sub{font-size:12pt;color:#444;margin-bottom:22mm}
+  .p-cover .who{font-size:16pt;font-weight:600;border-top:1px solid #bbb;border-bottom:1px solid #bbb;padding:6mm 0;display:inline-block;min-width:70%}
+  .p-cover .meta{margin-top:16mm;font-size:10pt;color:#555;line-height:1.7}
+  .p-toc{page-break-after:always;padding-top:6mm}
+  .p-toc h2{font-size:17pt;border-bottom:2px solid #222;padding-bottom:2mm;margin:0 0 6mm}
+  .p-toc ul{margin:0;padding:0;list-style:none}
+  .p-toc li{padding:2.4mm 0;border-bottom:1px dotted #ccc;font-size:11.5pt;display:flex;gap:3mm;align-items:baseline}
+  .p-toc li b{width:9mm;flex:none}
+  .p-toc li span{flex:1}
+  .p-toc li em{font-style:italic;color:#888;font-size:9.5pt;margin-left:3mm}
+  .p-sec{page-break-inside:auto;page-break-before:always;margin-bottom:9mm}
+  .p-sec h2{font-size:15pt;border-bottom:2px solid #222;padding-bottom:2mm;margin:0 0 4mm}
+  .p-row{display:flex;gap:5mm;border-bottom:1px dotted #bbb;padding:1.8mm 0;page-break-inside:avoid}
+  .p-row .k{width:42mm;flex:none;font-weight:700;font-size:9.5pt;color:#333}
+  .p-row .v{flex:1;white-space:pre-wrap;font-size:10.5pt}
+  .p-item{margin:0 0 3mm;padding-left:4mm;border-left:2.5px solid #999}
+  .p-item .t{font-weight:700;font-size:11pt;margin-bottom:1mm}
+  .p-foot{margin-top:10mm;border-top:1px solid #999;padding-top:3mm;font-size:9pt;color:#555;text-align:center}
+  .p-blank{color:#999;font-style:italic}
+}
+</style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#FDF9F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16140F" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="In Case">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21s-7-4.35-7-10a4 4 0 0 1 7-2.65A4 4 0 0 1 19 11c0 5.65-7 10-7 10z"/>
+          </svg>
+        </div>
+        <div class="brand-t">
+          <b id="brandName">In Case</b>
+          <span id="brandSub">Family Emergency Binder</span>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <span class="savedot" id="saveDot" hidden><i></i><span data-t="saved">Saved</span></span>
+
+      <div class="langtog" role="group" aria-label="Language">
+        <button type="button" id="langEn" aria-pressed="true" onclick="App.setLang('en')">EN</button>
+        <button type="button" id="langFr" aria-pressed="false" onclick="App.setLang('fr')">FR</button>
+      </div>
+
+      <button class="iconbtn" type="button" onclick="App.openSearch()" aria-label="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/>
+        </svg>
+      </button>
+
+      <button class="iconbtn" type="button" id="themeBtn" onclick="App.toggleTheme()" aria-label="Theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+
+      <button class="iconbtn" type="button" onclick="App.openPalette()" aria-label="Colour">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13.5" cy="6.5" r="1.3"/><circle cx="17.5" cy="10.5" r="1.3"/><circle cx="8.5" cy="7.5" r="1.3"/><circle cx="6.5" cy="12.5" r="1.3"/>
+          <path d="M12 2a10 10 0 1 0 0 20c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.6-.4-1 0-.9.7-1.6 1.6-1.6H16a6 6 0 0 0 6-6c0-4.7-4.5-8.7-10-8.7z"/>
+        </svg>
+      </button>
+
+      <button class="iconbtn" type="button" onclick="App.openBackup()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        <span class="lbl" data-t="backup">Backup</span>
+      </button>
+
+      <button class="iconbtn primary" type="button" onclick="App.printBinder()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/>
+        </svg>
+        <span class="lbl" data-t="print">Print binder</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="banners" id="banners"></div>
+
+  <main class="body" id="app-main">
+    <aside class="side">
+      <div class="progcard">
+        <div class="progtop">
+          <svg class="ring" viewBox="0 0 40 40" aria-hidden="true">
+            <circle class="bg" cx="20" cy="20" r="16"></circle>
+            <circle class="fg" id="ring" cx="20" cy="20" r="16" stroke-dasharray="0 100.5"></circle>
+          </svg>
+          <div class="pt">
+            <b id="progPct">0%</b>
+            <span id="progTxt">complete</span>
+          </div>
+        </div>
+      </div>
+      <nav aria-label="Sections">
+        <ul class="navlist" id="navList"></ul>
+      </nav>
+    </aside>
+
+    <div>
+      <div class="modeswitch" role="group" id="modeSwitch"></div>
+
+      <div class="mobpick">
+        <div class="row">
+          <select id="mobSel" aria-label="Choose a section" onchange="App.go(this.value)"></select>
+        </div>
+        <div class="minibar"><i id="miniBar" style="width:0%"></i></div>
+      </div>
+
+      <section class="sec" id="sec" aria-live="polite">
+        <div class="sec-h">
+          <div class="eyebrow" id="secEyebrow"></div>
+          <h2 id="secTitle"></h2>
+          <p id="secIntro"></p>
+        </div>
+        <div class="sec-b" id="secBody"></div>
+      </section>
+
+      <div class="secnav">
+        <button type="button" id="prevBtn" onclick="App.step(-1)"></button>
+        <button type="button" id="nextBtn" onclick="App.step(1)"></button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="foot-in">
+      <div>
+        <span class="shop">DreamsToDone</span>
+        <p data-t="footNote">Calm, offline tools that don't ask you to sign up for anything. Thank you for supporting a small shop.</p>
+      </div>
+      <p>
+        <a href="https://dreamstodone.etsy.com" target="_blank" rel="noopener noreferrer">dreamstodone.etsy.com</a><br>
+        <span style="font-size:12px" data-t="footVer">In Case &mdash; v1.5</span>
+      </p>
+    </div>
+  </footer>
+</div>
+
+<div id="print"></div>
+<div id="modalHost"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/* ============================================================
+   In Case — data model (bilingual)
+   e = English, f = Français (written in French, not translated)
+   ============================================================ */
+
+/* ---- Colour palettes: each ships a light and a dark build ---- */
+var PALETTES = {
+  butter:{
+    nm:{e:"Butter & Ink", f:"Ivoire & Encre"},
+    ds:{e:"Warm ivory, espresso, butter yellow", f:"Ivoire chaud, expresso, jaune beurre"},
+    chips:["#FDF9F0","#E3B23C","#2B2721","#B07A18"],
+    light:{ paper:"#FDF9F0","paper-2":"#F7F0E1", surface:"#FFFFFF", ink:"#23211E","ink-soft":"#4A4640", muted:"#787065",
+      line:"#E9E0CE","line-soft":"#F3ECDC", brand:"#2B2721","brand-deep":"#14110E","brand-wash":"#F1EADC","on-brand":"#FDF9F0",
+      accent:"#B07A18","accent-wash":"#FBF0D8", gold:"#E3B23C", danger:"#A33A2B","danger-wash":"#FBEAE7" },
+    dark:{ paper:"#16140F","paper-2":"#1E1B15", surface:"#232019", ink:"#F5EFE0","ink-soft":"#DCD3C0", muted:"#A79E8B",
+      line:"#37322A","line-soft":"#2B2721", brand:"#E3B23C","brand-deep":"#F0C868","brand-wash":"#2A2418","on-brand":"#1A1710",
+      accent:"#D98E5A","accent-wash":"#2B2118", gold:"#E3B23C", danger:"#E8877A","danger-wash":"#332321" }
+  },
+  clay:{
+    nm:{e:"Clay & Cocoa", f:"Argile & Cacao"},
+    ds:{e:"Dusty terracotta and soft brown", f:"Terre cuite poudrée et brun doux"},
+    chips:["#FBF4EF","#A8614A","#6E5546","#E6CDBC"],
+    light:{ paper:"#FBF4EF","paper-2":"#F4E8DF", surface:"#FFFFFF", ink:"#2E2320","ink-soft":"#574540", muted:"#816A62",
+      line:"#EBDACF","line-soft":"#F5EAE1", brand:"#A8614A","brand-deep":"#7E4633","brand-wash":"#F8E9E1","on-brand":"#FFFFFF",
+      accent:"#6E5546","accent-wash":"#F2E7DE", gold:"#C08A3E", danger:"#A33A2B","danger-wash":"#FBEAE7" },
+    dark:{ paper:"#1A1512","paper-2":"#221B17", surface:"#27201B", ink:"#F4E8E0","ink-soft":"#DAC8BC", muted:"#A89388",
+      line:"#3A2E27","line-soft":"#2C231D", brand:"#D98E70","brand-deep":"#E9A98D","brand-wash":"#2E211A","on-brand":"#1E1310",
+      accent:"#C4A08A","accent-wash":"#2A211B", gold:"#D9A85E", danger:"#E8877A","danger-wash":"#332321" }
+  },
+  moss:{
+    nm:{e:"Moss & Oat", f:"Mousse & Avoine"},
+    ds:{e:"Olive green on oat, with caramel", f:"Vert olive sur fond avoine, touche caramel"},
+    chips:["#F8F6EF","#5A6B45","#B0793C","#E0E0CF"],
+    light:{ paper:"#F8F6EF","paper-2":"#EFEDE1", surface:"#FFFFFF", ink:"#24261F","ink-soft":"#4C5043", muted:"#6C715F",
+      line:"#E0E0CF","line-soft":"#EFEFE3", brand:"#5A6B45","brand-deep":"#3F4E2F","brand-wash":"#EAEEE0","on-brand":"#F8F6EF",
+      accent:"#B0793C","accent-wash":"#F6EBDC", gold:"#C29A3E", danger:"#9E3F2C","danger-wash":"#FAEAE6" },
+    dark:{ paper:"#15170F","paper-2":"#1C1E15", surface:"#212418", ink:"#EEF0E2","ink-soft":"#D2D6C2", muted:"#9AA089",
+      line:"#333726","line-soft":"#26291B", brand:"#9DB47A","brand-deep":"#B4C994","brand-wash":"#232817","on-brand":"#161A0E",
+      accent:"#D9A469","accent-wash":"#2A2117", gold:"#CFAE5E", danger:"#E8877A","danger-wash":"#31221F" }
+  },
+  plum:{
+    nm:{e:"Plum & Dusk", f:"Prune & Crépuscule"},
+    ds:{e:"Deep plum with dusty rose", f:"Prune profonde et rose poudré"},
+    chips:["#FAF6F7","#6B4463","#B5766A","#E7DCE2"],
+    light:{ paper:"#FAF6F7","paper-2":"#F2EBEE", surface:"#FFFFFF", ink:"#2A2229","ink-soft":"#524551", muted:"#7A6B79",
+      line:"#E7DCE2","line-soft":"#F3ECF0", brand:"#6B4463","brand-deep":"#4E2F49","brand-wash":"#F1E7EF","on-brand":"#FAF6F7",
+      accent:"#B5766A","accent-wash":"#F8EAE6", gold:"#B9873F", danger:"#A33A2B","danger-wash":"#FBEAE7" },
+    dark:{ paper:"#161216","paper-2":"#1D181D", surface:"#221C22", ink:"#F1E8EF","ink-soft":"#D6C8D3", muted:"#A394A0",
+      line:"#362D35","line-soft":"#281F27", brand:"#C193B8","brand-deep":"#D6AECD","brand-wash":"#2A1F28","on-brand":"#1A121A",
+      accent:"#DFA294","accent-wash":"#2B1F1D", gold:"#D2A55F", danger:"#E8877A","danger-wash":"#331F1F" }
+  }
+};
+var PALETTE_ORDER = ["butter","clay","moss","plum"];
+
+var UI = {
+  en:{
+    saved:"Saved", backup:"Backup", print:"Print binder",
+    complete:"complete", ofSections:"of 11 sections started",
+    prev:"Previous", next:"Next", done:"You're at the end",
+    add:"Add", remove:"Remove", entry:"Entry", noneYet:"Nothing here yet — add your first one below.",
+    footNote:"Calm, offline tools that don't ask you to sign up for anything. Thank you for supporting a small shop.",
+    footVer:"In Case — v1.5",
+    brandSub:"Family Emergency Binder",
+    docTitle:"In Case — The Family Emergency Binder",
+    toastSaved:"Saved to this device", toastExport:"Backup file downloaded",
+    toastImport:"Backup restored", toastBadFile:"That file couldn't be read",
+    toastReset:"Everything cleared", toastIcs:"Reminder file downloaded",
+    bkTitle:"Backup & restore",
+    bkBody:"Your binder lives only in this browser, on this device. Nobody else can see it — and that also means nothing recovers it if this browser is cleared. Download a backup file and keep it somewhere safe.",
+    bkExport:"Download backup", bkImport:"Restore from backup", bkIcs:"Add a yearly review reminder",
+    bkReset:"Erase everything", bkClose:"Close",
+    rsTitle:"Erase everything?", rsBody:"This deletes every answer from this browser. If you haven't downloaded a backup, it cannot be undone.",
+    rsGo:"Yes, erase it all", rsNo:"Keep my binder",
+    imTitle:"Restore from a backup?", imBody:"This will replace everything currently in the binder with the contents of your backup file.",
+    imGo:"Replace and restore", imNo:"Cancel",
+    blockTitle:"This browser won't save your work",
+    blockBody:"Private browsing is usually the cause. Nothing you type here will still be here later. Switch to a normal window, or finish in one sitting and download a backup before you close the tab.",
+    dueTitle:"Time for a review",
+    dueBody:"It's been a while since you looked through this. Details go out of date quietly — a ten minute read-through is usually enough.",
+    dueDone:"I've reviewed it", dueLater:"Remind me later",
+    bkNudgeTitle:"You haven't backed up recently",
+    bkNudgeBody:"You've made changes since your last backup file. It takes one click.",
+    bkNudgeGo:"Download backup now",
+    welcomeTitle:"Before you begin",
+    welcomeBody:"Two things worth knowing. First, everything you type stays on this device — it is never uploaded anywhere, which is exactly why it's safe to write this down. Second, and for the same reason: never write passwords, card numbers or account numbers in here. Record where those things are kept and who can reach them. That's what your family actually needs.",
+    welcomeGo:"I understand — let's start",
+    palTheme:"Light or dark", themeLight:"Light", themeDark:"Dark", themeAuto:"Match my device",
+    palTitle:"Choose your colours", palBody:"Pick whichever one you'll actually enjoy looking at. You can change it any time, and it applies to light and dark mode.",
+    mileTitle50:"You're halfway there", mileBody50:"Six sections in. This is the right moment to download a backup — you'd be sorry to type all of that twice.",
+    mileTitle80:"Nearly done", mileBody80:"Most of the binder is filled in. Download a fresh backup so this version is safe.",
+    mileTitle100:"That's everything", mileBody100:"Every section has something in it. Download a backup, then print the binder and put it somewhere your family would look.",
+    mileGo:"Download backup", milePrint:"Print the binder", mileIcs:"Set a review reminder",
+    delConfirm:"Delete?",
+    shortTitle:"The short version",
+    shortIntro:"The parts your family would need first — on one page. Around fifteen minutes, and you can stop whenever you like. Everything saves as you type.",
+    modeShort:"Short version", modeAll:"Everything", modeShortNote:"The parts your family would need first",
+    modeAllNote:"All 11 sections",
+    shortDoneTitle:"You have a binder worth printing",
+    shortDoneBody:"The essentials are covered — if something happened tomorrow, this would already help. Print it now, then come back for the rest whenever you like.",
+    shortDoneGo:"See everything else", shortDonePrint:"Print what I have",
+    searchTitle:"Find something", searchPh:"Search the whole binder…",
+    searchNone:"Nothing matches that yet.", searchIn:"in",
+    contents:"Contents", contentsNot:"not filled in",
+    welcomeShort:"Start with the essentials", welcomeAll:"Go through everything",
+    blank:"— not filled in —",
+    coverSub:"What my family would need to know",
+    coverFor:"Prepared by", coverOn:"Last updated", coverKeep:"Keep this with your important documents.",
+    printFoot:"Made with In Case — DreamsToDone — dreamstodone.etsy.com"
+  },
+  fr:{
+    saved:"Enregistré", backup:"Sauvegarde", print:"Imprimer le classeur",
+    complete:"rempli", ofSections:"sections sur 11 entamées",
+    prev:"Précédent", next:"Suivant", done:"Fin du classeur",
+    add:"Ajouter", remove:"Supprimer", entry:"Fiche", noneYet:"Rien pour l'instant — ajoutez une première fiche ci-dessous.",
+    footNote:"Des outils sobres, hors ligne, sans compte ni abonnement. Merci de faire vivre une petite boutique.",
+    footVer:"In Case — v1.5",
+    brandSub:"Classeur d'urgence familial",
+    docTitle:"In Case — Le classeur d'urgence familial",
+    toastSaved:"Enregistré sur cet appareil", toastExport:"Sauvegarde téléchargée",
+    toastImport:"Sauvegarde restaurée", toastBadFile:"Ce fichier n'a pas pu être lu",
+    toastReset:"Tout a été effacé", toastIcs:"Rappel téléchargé",
+    bkTitle:"Sauvegarder et restaurer",
+    bkBody:"Votre classeur n'existe que dans ce navigateur, sur cet appareil. Personne d'autre n'y a accès — mais cela veut dire aussi que rien ne le récupérera si vous videz le navigateur. Téléchargez une sauvegarde et rangez-la en lieu sûr.",
+    bkExport:"Télécharger la sauvegarde", bkImport:"Restaurer une sauvegarde", bkIcs:"Créer un rappel de relecture",
+    bkReset:"Tout effacer", bkClose:"Fermer",
+    rsTitle:"Tout effacer ?", rsBody:"Toutes vos réponses seront supprimées de ce navigateur. Sans sauvegarde téléchargée, c'est sans retour.",
+    rsGo:"Oui, tout effacer", rsNo:"Garder mon classeur",
+    imTitle:"Restaurer une sauvegarde ?", imBody:"Le contenu actuel du classeur sera remplacé par celui de votre fichier de sauvegarde.",
+    imGo:"Remplacer et restaurer", imNo:"Annuler",
+    blockTitle:"Rien ne sera enregistré dans ce navigateur",
+    blockBody:"C'est presque toujours la navigation privée qui en est la cause. Ce que vous saisissez ici aura disparu dès la fermeture de l'onglet. Ouvrez une fenêtre normale, ou terminez d'une traite et téléchargez une sauvegarde avant de fermer.",
+    dueTitle:"Une relecture s'impose",
+    dueBody:"Vous n'avez pas rouvert ce classeur depuis un moment. Les informations se périment sans prévenir ; dix minutes suffisent en général.",
+    dueDone:"C'est relu", dueLater:"Plus tard",
+    bkNudgeTitle:"Aucune sauvegarde récente",
+    bkNudgeBody:"Vous avez modifié le classeur depuis votre dernière sauvegarde. Un clic suffit.",
+    bkNudgeGo:"Télécharger maintenant",
+    welcomeTitle:"Avant de commencer",
+    welcomeBody:"Deux choses à savoir. Tout ce que vous écrivez reste sur cet appareil : rien n'est envoyé sur Internet, et c'est précisément ce qui rend ce classeur sûr. Pour la même raison, n'y notez jamais de mots de passe, de codes ni de numéros de compte. Indiquez plutôt où ils se trouvent et qui peut y accéder — c'est cela dont vos proches auront besoin.",
+    welcomeGo:"J'ai compris — commençons",
+    palTheme:"Clair ou sombre", themeLight:"Clair", themeDark:"Sombre", themeAuto:"Comme mon appareil",
+    palTitle:"Choisissez vos couleurs", palBody:"Prenez celle que vous aurez plaisir à regarder. Vous pouvez en changer quand vous voulez, et cela vaut pour le mode clair comme pour le mode sombre.",
+    mileTitle50:"Vous êtes à mi-chemin", mileBody50:"Six sections de faites. C'est le bon moment pour télécharger une sauvegarde : vous n'auriez aucune envie de tout ressaisir.",
+    mileTitle80:"Presque au bout", mileBody80:"L'essentiel est rempli. Téléchargez une sauvegarde pour mettre cette version-là à l'abri.",
+    mileTitle100:"Tout y est", mileBody100:"Chaque section est renseignée. Téléchargez une sauvegarde, puis imprimez le classeur et rangez-le là où vos proches iront le chercher.",
+    mileGo:"Télécharger la sauvegarde", milePrint:"Imprimer le classeur", mileIcs:"Programmer un rappel",
+    delConfirm:"Supprimer ?",
+    shortTitle:"L'essentiel",
+    shortIntro:"Ce dont vos proches auraient besoin en premier — sur une seule page. Un quart d'heure environ, et vous pouvez vous arrêter quand vous voulez. Tout s'enregistre au fur et à mesure.",
+    modeShort:"L'essentiel", modeAll:"Tout le classeur", modeShortNote:"Ce dont vos proches auraient besoin en premier",
+    modeAllNote:"Les 11 sections",
+    shortDoneTitle:"Votre classeur vaut déjà la peine d'être imprimé",
+    shortDoneBody:"L'essentiel y est — s'il arrivait quelque chose demain, cela aiderait déjà. Imprimez-le maintenant, et revenez pour le reste quand vous voulez.",
+    shortDoneGo:"Voir tout le reste", shortDonePrint:"Imprimer ce que j'ai",
+    searchTitle:"Retrouver quelque chose", searchPh:"Chercher dans tout le classeur…",
+    searchNone:"Rien ne correspond pour l'instant.", searchIn:"dans",
+    contents:"Sommaire", contentsNot:"non renseignée",
+    welcomeShort:"Commencer par l'essentiel", welcomeAll:"Parcourir tout le classeur",
+    blank:"— non renseigné —",
+    coverSub:"Ce que mes proches doivent savoir",
+    coverFor:"Établi par", coverOn:"Mis à jour le", coverKeep:"À conserver avec vos papiers importants.",
+    printFoot:"Créé avec In Case — DreamsToDone — dreamstodone.etsy.com"
+  }
+};
+
+var SECTIONS = [
+{ id:"start",
+  e:{t:"Start here", i:"A short set-up, then the binder itself. You do not have to finish this in one go — everything saves as you type."},
+  f:{t:"Pour commencer", i:"Une petite mise en route, puis le classeur lui-même. Rien ne presse : tout s'enregistre au fur et à mesure."},
+  blocks:[
+    {k:"note", tone:"care", e:"Never write passwords, PINs, card numbers or account numbers in this binder. Write down <b>where</b> they are kept and <b>who</b> can reach them. That is safer, and it is what your family actually needs.", f:"N'inscrivez jamais de mots de passe, de codes ni de numéros de compte dans ce classeur. Notez plutôt <b>où</b> ils se trouvent et <b>qui</b> peut y accéder. C'est plus sûr, et c'est ce dont vos proches auront réellement besoin."},
+    {k:"f", key:1, id:"ownerName", t:"text", e:"This binder belongs to", f:"Ce classeur est celui de", ph:{e:"Your name", f:"Votre nom"}},
+    {k:"f", id:"startedOn", t:"date", e:"Started on", f:"Commencé le"},
+    {k:"f", key:1, id:"binderWhere", t:"textarea", full:1, e:"Where the printed copy will be kept", f:"Où sera rangée la version imprimée", h:{e:"A drawer, a safe, with your will, with a trusted person — anywhere someone would think to look.", f:"Un tiroir, un coffre, avec votre testament, chez une personne de confiance — un endroit où l'on penserait à chercher."}},
+    {k:"f", key:1, id:"whoKnows", t:"textarea", full:1, e:"Who knows this binder exists", f:"Qui sait que ce classeur existe", h:{e:"A binder nobody knows about does no good. Name at least two people.", f:"Un classeur dont personne ne connaît l'existence ne sert à rien. Citez au moins deux personnes."}},
+    {k:"f", id:"reviewEvery", t:"select", noCount:1, e:"Remind me to review this every", f:"Me rappeler de le relire tous les",
+      opts:[{v:"12",e:"12 months",f:"12 mois"},{v:"6",e:"6 months",f:"6 mois"},{v:"24",e:"24 months",f:"24 mois"}]}
+  ]},
+
+{ id:"about",
+  e:{t:"About you", i:"The details someone would be asked for while you are unable to answer."},
+  f:{t:"Vous", i:"Les informations qu'on vous demanderait si vous n'étiez pas en état de répondre."},
+  blocks:[
+    {k:"f", key:1, id:"fullName", t:"text", e:"Full legal name", f:"Nom et prénom (état civil)"},
+    {k:"f", id:"otherNames", t:"text", e:"Other names you've used", f:"Autres noms utilisés", h:{e:"Maiden name, previous married name, professional name.", f:"Nom de naissance, nom d'un précédent mariage, nom d'usage."}},
+    {k:"f", key:1, id:"dob", t:"date", e:"Date of birth", f:"Date de naissance"},
+    {k:"f", id:"birthPlace", t:"text", e:"Place of birth", f:"Lieu de naissance"},
+    {k:"f", id:"address", t:"textarea", full:1, e:"Home address", f:"Adresse du domicile"},
+    {k:"f", id:"phone", t:"tel", e:"Your phone", f:"Votre téléphone"},
+    {k:"f", id:"email", t:"email", e:"Your email", f:"Votre adresse e-mail"},
+    {k:"f", key:1, id:"idDocsWhere", t:"textarea", full:1, e:"Where your identity documents are kept", f:"Où sont rangés vos papiers d'identité", h:{e:"Passport, ID card, driving licence, social security or national insurance card. Where they are — not the numbers.", f:"Carte d'identité, passeport, permis de conduire, carte Vitale, livret de famille. L'endroit — pas les numéros."}},
+    {k:"f", id:"employer", t:"text", e:"Employer", f:"Employeur"},
+    {k:"f", id:"employerContact", t:"text", e:"Who to tell at work", f:"Qui prévenir au travail", h:{e:"A name and a number.", f:"Un nom et un numéro."}}
+  ]},
+
+{ id:"people",
+  e:{t:"People to call", i:"Put them in the order you would want them called. The first three matter most."},
+  f:{t:"Qui appeler", i:"Classez-les dans l'ordre où vous voudriez qu'on les appelle. Les trois premiers comptent le plus."},
+  blocks:[
+    {k:"note", tone:"info", e:"Whoever finds this will be stressed and in a hurry. Short, obvious entries beat complete ones.", f:"La personne qui ouvrira ce classeur sera bouleversée et pressée. Mieux vaut des fiches courtes et évidentes que des fiches complètes."},
+    {k:"list", key:1, id:"contacts", itemE:"Person", itemF:"Personne", addE:"Add a person", addF:"Ajouter une personne",
+      title:["name","relationship"],
+      fields:[
+        {id:"name", t:"text", e:"Name", f:"Nom"},
+        {id:"relationship", t:"text", e:"Relationship to you", f:"Lien avec vous"},
+        {id:"phone", t:"tel", e:"Phone", f:"Téléphone"},
+        {id:"phone2", t:"tel", e:"Another number", f:"Autre numéro"},
+        {id:"email", t:"email", e:"Email", f:"E-mail"},
+        {id:"notes", t:"textarea", full:1, e:"Anything the caller should know", f:"Ce que la personne qui appelle doit savoir", h:{e:"“Tell her gently, she is on her own.” “He has a key.” “Do not call before 8am.”", f:"« Annoncez-le-lui doucement, elle vit seule. » « Il a un double des clés. » « Ne pas appeler avant 8 h. »"}}
+      ]},
+    {k:"f", id:"callOrderNote", t:"textarea", full:1, e:"Anything about the order", f:"Précisions sur l'ordre", h:{e:"Who should be told first, and who should not be told by phone.", f:"Qui prévenir en premier, et qui ne surtout pas prévenir par téléphone."}}
+  ]},
+
+{ id:"home",
+  e:{t:"Home & household", i:"How the house runs, and who to call when it doesn't."},
+  f:{t:"La maison", i:"Comment la maison fonctionne, et qui appeler quand elle ne fonctionne plus."},
+  blocks:[
+    {k:"f", id:"homeStatus", t:"select", e:"This home is", f:"Ce logement est",
+      opts:[{v:"",e:"Not stated",f:"Non précisé"},{v:"own",e:"Owned",f:"En pleine propriété"},{v:"mortgage",e:"Owned with a mortgage",f:"En propriété, avec un crédit en cours"},{v:"rent",e:"Rented",f:"En location"},{v:"other",e:"Something else",f:"Autre"}]},
+    {k:"f", id:"landlord", t:"text", e:"Landlord or lender", f:"Propriétaire ou organisme prêteur"},
+    {k:"f", id:"landlordPhone", t:"tel", e:"Their number", f:"Son numéro"},
+    {k:"f", key:1, id:"keysWhere", t:"textarea", full:1, e:"Where the keys are, and who has spares", f:"Où sont les clés, et qui en a un double"},
+    {k:"f", id:"alarmWhere", t:"textarea", full:1, e:"Where the alarm details are kept", f:"Où sont notées les informations de l'alarme", h:{e:"The location of the code — not the code itself.", f:"L'endroit où se trouve le code — surtout pas le code."}},
+    {k:"f", id:"neighbour", t:"text", e:"A neighbour who helps", f:"Un voisin sur qui compter"},
+    {k:"f", id:"neighbourPhone", t:"tel", e:"Their number", f:"Son numéro"},
+    {k:"list", id:"utilities", itemE:"Supplier", itemF:"Fournisseur", addE:"Add a supplier", addF:"Ajouter un fournisseur",
+      title:["service","supplier"],
+      fields:[
+        {id:"service", t:"text", e:"Service", f:"Service", ph:{e:"Electricity, water, internet…", f:"Électricité, eau, internet…"}},
+        {id:"supplier", t:"text", e:"Company", f:"Fournisseur"},
+        {id:"phone", t:"tel", e:"Phone", f:"Téléphone"},
+        {id:"refWhere", t:"text", e:"Where the account reference is kept", f:"Où se trouve la référence client"}
+      ]},
+    {k:"f", id:"houseQuirks", t:"textarea", full:1, e:"Things only you know", f:"Ce que vous êtes seul à savoir", h:{e:"The stopcock is under the stairs. The boiler needs a hard reset. Bins go out Tuesday night.", f:"L'arrivée d'eau est sous l'escalier. La chaudière demande un redémarrage complet. Les poubelles sortent le mardi soir."}}
+  ]},
+
+{ id:"pets",
+  e:{t:"Pets", i:"They can't explain their own routine. Skip this section if it doesn't apply."},
+  f:{t:"Les animaux", i:"Ils ne peuvent pas expliquer leurs habitudes. Passez cette section si elle ne vous concerne pas."},
+  blocks:[
+    {k:"list", id:"pets", itemE:"Pet", itemF:"Animal", addE:"Add a pet", addF:"Ajouter un animal",
+      title:["name","species"],
+      fields:[
+        {id:"name", t:"text", e:"Name", f:"Nom"},
+        {id:"species", t:"text", e:"Animal / breed", f:"Espèce ou race"},
+        {id:"vet", t:"text", e:"Vet", f:"Vétérinaire"},
+        {id:"vetPhone", t:"tel", e:"Vet phone", f:"Téléphone du vétérinaire"},
+        {id:"routine", t:"textarea", full:1, e:"Food, medication, routine", f:"Alimentation, traitements, habitudes"},
+        {id:"whoTakes", t:"text", e:"Who should take them", f:"Qui devrait le recueillir"},
+        {id:"chipWhere", t:"text", e:"Where the microchip / insurance papers are", f:"Où sont les papiers (puce, assurance)"}
+      ]}
+  ]},
+
+{ id:"money",
+  e:{t:"Money & policies", i:"Not the numbers — the institutions, and where the paperwork lives."},
+  f:{t:"Argent et contrats", i:"Pas les numéros — les organismes, et l'endroit où sont rangés les papiers."},
+  blocks:[
+    {k:"note", tone:"care", e:"Account numbers and passwords do not belong here. Naming the bank and the drawer is enough for anyone with the legal right to act.", f:"Les numéros de compte et les mots de passe n'ont rien à faire ici. Citer la banque et le tiroir suffit à toute personne habilitée à agir."},
+    {k:"list", key:1, id:"banks", itemE:"Account", itemF:"Compte", addE:"Add an institution", addF:"Ajouter un organisme",
+      title:["institution","kind"],
+      fields:[
+        {id:"institution", t:"text", e:"Bank or institution", f:"Banque ou organisme"},
+        {id:"kind", t:"select", e:"Type", f:"Type",
+          opts:[{v:"current",e:"Current / checking",f:"Compte courant"},{v:"savings",e:"Savings",f:"Livret ou épargne"},{v:"joint",e:"Joint account",f:"Compte joint"},{v:"credit",e:"Credit card",f:"Carte de crédit"},{v:"mortgage",e:"Mortgage",f:"Crédit immobilier"},{v:"loan",e:"Loan",f:"Prêt"},{v:"invest",e:"Investments",f:"Placements"},{v:"other",e:"Other",f:"Autre"}]},
+        {id:"phone", t:"tel", e:"Phone", f:"Téléphone"},
+        {id:"docsWhere", t:"text", e:"Where the paperwork is", f:"Où sont les documents"}
+      ]},
+    {k:"list", key:1, id:"policies", itemE:"Policy", itemF:"Contrat", addE:"Add a policy", addF:"Ajouter un contrat",
+      title:["type","provider"],
+      fields:[
+        {id:"type", t:"select", e:"Type of cover", f:"Type de contrat",
+          opts:[{v:"life",e:"Life insurance",f:"Assurance vie"},{v:"home",e:"Home",f:"Habitation"},{v:"car",e:"Car",f:"Automobile"},{v:"health",e:"Health",f:"Mutuelle ou complémentaire santé"},{v:"income",e:"Income protection",f:"Prévoyance"},{v:"travel",e:"Travel",f:"Voyage"},{v:"funeral",e:"Funeral plan",f:"Contrat obsèques"},{v:"other",e:"Other",f:"Autre"}]},
+        {id:"provider", t:"text", e:"Provider", f:"Assureur"},
+        {id:"phone", t:"tel", e:"Phone", f:"Téléphone"},
+        {id:"docsWhere", t:"text", e:"Where the policy document is", f:"Où est le contrat"},
+        {id:"notes", t:"textarea", full:1, e:"Who it pays out to, or anything unusual", f:"Qui en est bénéficiaire, ou toute particularité"}
+      ]},
+    {k:"f", id:"pensionsWhere", t:"textarea", full:1, e:"Pensions and retirement savings", f:"Retraite et épargne retraite", h:{e:"Which schemes, from which employers, and where the statements are.", f:"Quelles caisses, pour quels employeurs, et où sont les relevés."}},
+    {k:"f", id:"regularPayments", t:"textarea", full:1, e:"Money that would keep going out", f:"Les sommes qui continueraient à partir", h:{e:"Direct debits, standing orders, memberships. The ones someone would need to stop.", f:"Prélèvements automatiques, virements permanents, cotisations. Ceux qu'il faudrait penser à arrêter."}},
+    {k:"f", id:"accountant", t:"text", e:"Accountant or financial adviser", f:"Comptable ou conseiller financier"},
+    {k:"f", id:"accountantPhone", t:"tel", e:"Their number", f:"Son numéro"}
+  ]},
+
+{ id:"medical",
+  e:{t:"Medical", i:"Written for whoever is standing next to you in an emergency."},
+  f:{t:"Santé", i:"Écrit pour la personne qui se trouvera à côté de vous en cas d'urgence."},
+  blocks:[
+    {k:"f", key:1, id:"gp", t:"text", e:"Doctor / GP", f:"Médecin traitant"},
+    {k:"f", id:"gpPhone", t:"tel", e:"Their number", f:"Son numéro"},
+    {k:"f", id:"pharmacy", t:"text", e:"Usual pharmacy", f:"Pharmacie habituelle"},
+    {k:"f", id:"pharmacyPhone", t:"tel", e:"Pharmacy number", f:"Son numéro"},
+    {k:"f", id:"bloodType", t:"select", e:"Blood type", f:"Groupe sanguin",
+      opts:[{v:"",e:"Not known",f:"Inconnu"},{v:"O-",e:"O−",f:"O−"},{v:"O+",e:"O+",f:"O+"},{v:"A-",e:"A−",f:"A−"},{v:"A+",e:"A+",f:"A+"},{v:"B-",e:"B−",f:"B−"},{v:"B+",e:"B+",f:"B+"},{v:"AB-",e:"AB−",f:"AB−"},{v:"AB+",e:"AB+",f:"AB+"}]},
+    {k:"f", key:1, id:"allergies", t:"textarea", full:1, e:"Allergies and reactions", f:"Allergies et réactions"},
+    {k:"f", id:"conditions", t:"textarea", full:1, e:"Ongoing conditions", f:"Problèmes de santé suivis"},
+    {k:"f", key:1, id:"medications", t:"textarea", full:1, e:"Current medication", f:"Traitements en cours", h:{e:"Name, dose, and what it's for. A photo of the packets kept with the printed binder is easier to keep current.", f:"Nom, dose, et à quoi il sert. Une photo des boîtes glissée dans le classeur imprimé se met à jour bien plus facilement."}},
+    {k:"list", id:"specialists", itemE:"Specialist", itemF:"Spécialiste", addE:"Add a specialist", addF:"Ajouter un spécialiste",
+      title:["name","field"],
+      fields:[
+        {id:"name", t:"text", e:"Name", f:"Nom"},
+        {id:"field", t:"text", e:"What they treat", f:"Spécialité"},
+        {id:"phone", t:"tel", e:"Phone", f:"Téléphone"}
+      ]},
+    {k:"f", key:1, id:"directiveWhere", t:"textarea", full:1, e:"Where your advance directive or living will is kept", f:"Où sont vos directives anticipées", h:{e:"And who holds a copy.", f:"Et qui en détient une copie. Précisez aussi votre personne de confiance, si vous en avez désigné une."}},
+    {k:"f", id:"organDonor", t:"select", e:"Organ donation", f:"Don d'organes",
+      opts:[{v:"",e:"Not stated",f:"Non précisé"},{v:"registered",e:"Registered as a donor",f:"Favorable — carte de donneur ou proches informés"},{v:"yes",e:"Willing, not registered",f:"Favorable, sans démarche faite"},{v:"no",e:"Not willing",f:"Opposé — inscrit au registre national des refus"},{v:"unsure",e:"Undecided",f:"Pas encore décidé"}]}
+  ]},
+
+{ id:"legal",
+  e:{t:"Legal & documents", i:"Where the papers are, and who is allowed to act."},
+  f:{t:"Papiers et démarches", i:"Où sont les documents, et qui a le droit d'agir."},
+  blocks:[
+    {k:"f", key:1, id:"willWhere", t:"textarea", full:1, e:"Where your will is kept", f:"Où se trouve votre testament", h:{e:"The original, not a copy — say which is which.", f:"L'original, pas une copie — précisez lequel est où. S'il est déposé chez un notaire, indiquez lequel."}},
+    {k:"f", id:"solicitor", t:"text", e:"Solicitor / notaire", f:"Notaire"},
+    {k:"f", id:"solicitorPhone", t:"tel", e:"Their number", f:"Son numéro"},
+    {k:"f", key:1, id:"executor", t:"text", e:"Executor", f:"Personne chargée d'exécuter vos volontés"},
+    {k:"f", id:"executorPhone", t:"tel", e:"Their number", f:"Son numéro"},
+    {k:"f", id:"poaWho", t:"text", e:"Power of attorney held by", f:"Mandat de protection future confié à"},
+    {k:"f", id:"poaWhere", t:"textarea", full:1, e:"Where the power of attorney document is", f:"Où se trouve le mandat de protection future, ou la procuration"},
+    {k:"f", id:"deedsWhere", t:"textarea", full:1, e:"Property deeds and vehicle documents", f:"Titres de propriété et carte grise"},
+    {k:"f", id:"certsWhere", t:"textarea", full:1, e:"Birth, marriage and other certificates", f:"Livret de famille, actes de naissance et de mariage"}
+  ]},
+
+{ id:"digital",
+  e:{t:"Digital life", i:"The part families get most stuck on — and the part where writing passwords down would be a mistake."},
+  f:{t:"Vie numérique", i:"Ce sur quoi les proches butent le plus — et là, justement, où noter ses mots de passe serait une erreur."},
+  blocks:[
+    {k:"note", tone:"care", e:"No passwords. Record where your password manager is and who can unlock it — one instruction that opens everything, instead of a list that goes stale and puts you at risk.", f:"Aucun mot de passe. Indiquez où se trouve votre gestionnaire de mots de passe et qui peut l'ouvrir : une seule consigne qui donne accès à tout, plutôt qu'une liste qui se périme et vous expose."},
+    {k:"f", id:"pwManager", t:"text", e:"Password manager used", f:"Gestionnaire de mots de passe utilisé"},
+    {k:"f", key:1, id:"pwWhere", t:"textarea", full:1, e:"How someone would get into it", f:"Comment quelqu'un pourrait y accéder", h:{e:"Where the recovery kit is, or who holds emergency access — never the master password itself.", f:"Où se trouve la clé de récupération, ou qui dispose d'un accès d'urgence — jamais le mot de passe principal."}},
+    {k:"f", id:"devicesWhere", t:"textarea", full:1, e:"Phone and computer unlock", f:"Déverrouillage du téléphone et de l'ordinateur", h:{e:"Where that information is kept, and who has it.", f:"Où cette information est conservée, et qui la détient."}},
+    {k:"list", id:"accounts", itemE:"Account", itemF:"Compte", addE:"Add an account", addF:"Ajouter un compte",
+      title:["service","username"],
+      fields:[
+        {id:"service", t:"text", e:"Service", f:"Service", ph:{e:"Email, bank app, photo storage…", f:"Messagerie, appli bancaire, photos…"}},
+        {id:"username", t:"text", e:"Username or email", f:"Identifiant ou adresse e-mail", h:{e:"Never the password.", f:"Jamais le mot de passe."}},
+        {id:"what", t:"select", e:"What should happen to it", f:"Que faut-il en faire",
+          opts:[{v:"",e:"Not decided",f:"Non décidé"},{v:"close",e:"Close it",f:"Le fermer"},{v:"memorial",e:"Memorialise it",f:"Le transformer en compte de souvenir"},{v:"transfer",e:"Pass it to someone",f:"Le transmettre à quelqu'un"},{v:"keep",e:"Keep it running",f:"Le laisser actif"},{v:"download",e:"Download the contents first",f:"En récupérer le contenu d'abord"}]},
+        {id:"notes", t:"textarea", full:1, e:"Notes", f:"Notes"}
+      ]},
+    {k:"list", id:"subs", itemE:"Subscription", itemF:"Abonnement", addE:"Add a subscription", addF:"Ajouter un abonnement",
+      title:["service","cost"],
+      fields:[
+        {id:"service", t:"text", e:"Service", f:"Service"},
+        {id:"cost", t:"text", e:"Roughly what it costs", f:"Coût approximatif"},
+        {id:"billing", t:"select", e:"Billed", f:"Facturation",
+          opts:[{v:"monthly",e:"Monthly",f:"Mensuelle"},{v:"annual",e:"Yearly",f:"Annuelle"},{v:"other",e:"Other",f:"Autre"}]},
+        {id:"cancel", t:"text", e:"How it's cancelled", f:"Comment le résilier"}
+      ]}
+  ]},
+
+{ id:"wishes",
+  e:{t:"My wishes", i:"Deciding this yourself is a kindness. It takes the guessing away from people who are grieving."},
+  f:{t:"Mes volontés", i:"Décider vous-même, c'est un cadeau : cela évite d'avoir à deviner à des gens en plein chagrin."},
+  blocks:[
+    {k:"note", tone:"info", e:"Nothing here is binding, and you can change it any time. It is simply your voice in the room when you can't be.", f:"Rien ici n'a de valeur juridique, et vous pouvez tout changer quand vous voulez. C'est simplement votre voix dans la pièce quand vous n'y serez pas."},
+    {k:"f", key:1, id:"serviceType", t:"select", e:"I would prefer", f:"Je préférerais",
+      opts:[{v:"",e:"Not decided",f:"Non décidé"},{v:"burial",e:"Burial",f:"Une inhumation"},{v:"cremation",e:"Cremation",f:"Une crémation"},{v:"donation",e:"Donation to science",f:"Un don du corps à la science"},{v:"other",e:"Something else — described below",f:"Autre chose — décrit plus bas"}]},
+    {k:"f", id:"serviceNotes", t:"textarea", full:1, e:"How I'd like it to feel", f:"L'atmosphère que j'aimerais", h:{e:"Formal or informal, religious or not, who speaks, what people wear.", f:"Solennel ou non, religieux ou non, qui prend la parole, comment les gens s'habillent."}},
+    {k:"f", id:"music", t:"textarea", full:1, e:"Music", f:"Musiques"},
+    {k:"f", id:"readings", t:"textarea", full:1, e:"Readings or words", f:"Textes ou lectures"},
+    {k:"f", id:"restingPlace", t:"textarea", full:1, e:"Where I'd like to be", f:"Où j'aimerais reposer"},
+    {k:"f", id:"invite", t:"textarea", full:1, e:"People who should be told", f:"Les personnes à prévenir", h:{e:"Especially anyone your family might not think of — old friends, colleagues, people online.", f:"Surtout celles auxquelles vos proches ne penseraient pas : vieux amis, collègues, relations en ligne."}},
+    {k:"f", id:"belongings", t:"textarea", full:1, e:"Belongings that should go to someone specific", f:"Les objets qui doivent revenir à quelqu'un en particulier", h:{e:"This does not replace a will — but it explains the things a will never covers.", f:"Cela ne remplace pas un testament — mais cela dit ce qu'un testament ne dit jamais."}},
+    {k:"f", id:"charities", t:"text", e:"Donations, if people ask", f:"Dons, si l'on pose la question"},
+    {k:"list", id:"messages", itemE:"Message", itemF:"Message", addE:"Write a message", addF:"Écrire un message",
+      title:["toWho"],
+      fields:[
+        {id:"toWho", t:"text", e:"To", f:"Pour"},
+        {id:"body", t:"textarea", full:1, e:"What I want them to know", f:"Ce que je veux qu'elle ou il sache"}
+      ]},
+    {k:"f", id:"lettersWhere", t:"textarea", full:1, e:"Where any letters I've written are kept", f:"Où sont rangées les lettres que j'ai écrites"}
+  ]},
+
+{ id:"where",
+  e:{t:"Where things are", i:"The last section, and often the most used. Anything that would take an afternoon to find."},
+  f:{t:"Où se trouvent les choses", i:"La dernière section, et souvent la plus utile. Tout ce qui prendrait un après-midi à retrouver."},
+  blocks:[
+    {k:"list", key:1, id:"places", itemE:"Item", itemF:"Élément", addE:"Add something", addF:"Ajouter un élément",
+      title:["item","location"],
+      fields:[
+        {id:"item", t:"text", e:"What it is", f:"De quoi il s'agit", ph:{e:"Safe, jewellery, family photos, tools…", f:"Coffre, bijoux, photos de famille, outils…"}},
+        {id:"location", t:"text", e:"Where", f:"Où"},
+        {id:"access", t:"text", e:"Who can get to it", f:"Qui peut y accéder"},
+        {id:"notes", t:"textarea", full:1, e:"Notes", f:"Notes"}
+      ]},
+    {k:"f", id:"storageUnit", t:"textarea", full:1, e:"Storage unit, garage, second property", f:"Box de stockage, garage, résidence secondaire"},
+    {k:"f", id:"finalNotes", t:"textarea", full:1, e:"Anything else", f:"Autre chose", h:{e:"The thing you keep meaning to tell someone.", f:"Ce que vous vous promettez depuis toujours de dire à quelqu'un."}}
+  ]}
+];
+</script>
+<script>
+(function(){
+"use strict";
+
+/* ------------------------------------------------------------------
+   Opening language on a buyer's very first open.
+     "auto" → follows the browser's language (French browser → French)
+     "en" / "fr" → always opens in that language
+   After the first open, whatever the buyer picks with the EN/FR
+   toggle is remembered and always wins.
+   ------------------------------------------------------------------ */
+var DEFAULT_LANG = "auto";
+
+/* Demo build: seeds a fictional, filled-in binder for listing screenshots and
+   skips the welcome dialog. false in the product; the demo file flips it true. */
+var DEMO = false;
+
+var KEY = "incase.binder.v1";
+var CAN_STORE = (function(){
+  try{ var k="__t"+Date.now(); localStorage.setItem(k,"1"); localStorage.removeItem(k); return true; }
+  catch(e){ return false; }
+})();
+
+var state = {
+  v:1, lang:"en", theme:null, palette:"butter", mode:"short", cur:0,
+  data:{}, meta:{ firstSaved:null, lastReview:null, lastBackup:null, edits:0, seenWelcome:false, snoozeReview:null, milestones:[], activeMilestone:null }
+};
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function $(id){ return document.getElementById(id); }
+function L(o){ return (state.lang==="fr" ? o.f : o.e); }
+function T(k){ return (UI[state.lang]&&UI[state.lang][k]) || UI.en[k] || k; }
+function sec(i){ return SECTIONS[i]; }
+function bag(sid){ if(!state.data[sid]) state.data[sid]={}; return state.data[sid]; }
+function nonEmpty(v){ return v!=null && String(v).trim()!==""; }
+function today(){ return new Date(); }
+function iso(d){ return d.toISOString().slice(0,10); }
+function fmtDate(s){
+  if(!s) return "";
+  var d = new Date(s+(s.length===10?"T12:00:00":""));
+  if(isNaN(d)) return s;
+  try{ return d.toLocaleDateString(state.lang==="fr"?"fr-FR":"en-GB",{day:"numeric",month:"long",year:"numeric"}); }
+  catch(e){ return s; }
+}
+function monthsSince(s){
+  if(!s) return Infinity;
+  var d=new Date(s); if(isNaN(d)) return Infinity;
+  return (today()-d)/(1000*60*60*24*30.44);
+}
+function daysSince(s){
+  if(!s) return Infinity;
+  var d=new Date(s); if(isNaN(d)) return Infinity;
+  return (today()-d)/(1000*60*60*24);
+}
+
+/* ---------- persistence ---------- */
+var saveTimer=null, dotTimer=null, printTimer=null;
+function save(now, silent){
+  if(!CAN_STORE) return;
+  clearTimeout(saveTimer);
+  var doIt=function(){
+    try{
+      localStorage.setItem(KEY, JSON.stringify({
+        v:1, lang:state.lang, theme:state.theme, palette:state.palette, mode:state.mode, data:state.data, meta:state.meta
+      }));
+      if(!silent) flashSaved();
+    }catch(e){ /* quota or blocked — banner already covers it */ }
+  };
+  if(now) doIt(); else saveTimer=setTimeout(doIt, 400);
+}
+function flashSaved(){
+  var d=$("saveDot"); if(!d) return;
+  d.hidden=false; clearTimeout(dotTimer);
+  dotTimer=setTimeout(function(){ d.hidden=true; }, 1600);
+}
+function load(){
+  if(!CAN_STORE) return;
+  try{
+    var raw=localStorage.getItem(KEY); if(!raw) return;
+    var o=JSON.parse(raw); if(!o||typeof o!=="object") return;
+    if(o.data && typeof o.data==="object") state.data=o.data;
+    if(o.lang==="fr"||o.lang==="en") state.lang=o.lang;
+    if(o.theme==="dark"||o.theme==="light") state.theme=o.theme;
+    if(o.palette && PALETTES[o.palette]) state.palette=o.palette;
+    if(o.mode==="short"||o.mode==="all") state.mode=o.mode;
+    if(o.meta && typeof o.meta==="object"){
+      for(var k in state.meta){ if(k in o.meta) state.meta[k]=o.meta[k]; }
+    }
+  }catch(e){}
+}
+
+/* A dropdown whose first option is a real value (not "not stated") shows that
+   value on screen, so it must be stored too — otherwise the binder can never
+   reach 100% and the display disagrees with what is saved. */
+function seedSelectDefaults(){
+  for(var i=0;i<SECTIONS.length;i++){
+    var s=SECTIONS[i];
+    for(var n=0;n<s.blocks.length;n++){
+      var b=s.blocks[n];
+      if(b.k==="f" && b.t==="select" && b.opts && b.opts.length && b.opts[0].v!==""){
+        if(!nonEmpty(bag(s.id)[b.id])) bag(s.id)[b.id] = b.opts[0].v;
+      }
+    }
+  }
+}
+
+/* ---------- short version ----------
+   "short" shows only the blocks marked key:1 — the parts a family needs
+   first. Nothing is deleted; the rest is one click away. Sections with no
+   essential block drop out of the list entirely while in short mode. */
+function inMode(b){
+  if(state.mode!=="short") return true;
+  if(b.k==="note") return true;
+  return !!b.key;
+}
+function visibleBlocks(s){
+  var out=[];
+  for(var i=0;i<s.blocks.length;i++){ if(inMode(s.blocks[i])) out.push(s.blocks[i]); }
+  return out;
+}
+function sectionHasContentBlocks(s){
+  var v=visibleBlocks(s);
+  for(var i=0;i<v.length;i++){ if(v[i].k!=="note") return true; }
+  return false;
+}
+function visibleSections(){
+  var out=[];
+  for(var i=0;i<SECTIONS.length;i++){ if(sectionHasContentBlocks(SECTIONS[i])) out.push(i); }
+  return out;
+}
+
+/* ---------- progress ---------- */
+function listFilled(sid, b){
+  var arr = bag(sid)[b.id];
+  if(!arr || !arr.length) return false;
+  for(var i=0;i<arr.length;i++){
+    for(var j=0;j<b.fields.length;j++){
+      if(nonEmpty(arr[i][b.fields[j].id])) return true;
+    }
+  }
+  return false;
+}
+function sectionStats(i){
+  var s=sec(i), total=0, done=0, blocks=visibleBlocks(s);
+  for(var n=0;n<blocks.length;n++){
+    var b=blocks[n];
+    if(b.k==="f"){ if(b.noCount) continue; total++; if(nonEmpty(bag(s.id)[b.id])) done++; }
+    else if(b.k==="list"){ total++; if(listFilled(s.id,b)) done++; }
+  }
+  return {total:total, done:done};
+}
+function overall(){
+  var t=0,d=0,started=0, vis=visibleSections();
+  for(var k=0;k<vis.length;k++){
+    var st=sectionStats(vis[k]); t+=st.total; d+=st.done;
+    if(st.done>0) started++;
+  }
+  return {pct: t? Math.round(d/t*100):0, started:started, sections:vis.length};
+}
+
+/* ---------- rendering: nav ---------- */
+function renderNav(){
+  var ul=$("navList"), sel=$("mobSel");
+  var navHTML="", selHTML="", vis=visibleSections();
+  for(var k=0;k<vis.length;k++){
+    var i=vis[k], st=sectionStats(i);
+    var cls = st.done===0 ? "" : (st.done>=st.total ? "done" : "part");
+    navHTML += '<li><button type="button" onclick="App.go('+i+')" aria-current="'+(i===state.cur)+'">'+
+      '<span class="navnum">'+(k+1)+'</span>'+
+      '<span>'+esc(title(i))+'</span>'+
+      '<span class="navdot '+cls+'"></span></button></li>';
+    selHTML += '<option value="'+i+'"'+(i===state.cur?" selected":"")+'>'+
+      (k+1)+'. '+esc(title(i))+'  ('+st.done+'/'+st.total+')</option>';
+  }
+  ul.innerHTML=navHTML;
+  sel.innerHTML=selHTML;
+
+  var ms=$("modeSwitch");
+  ms.innerHTML =
+    '<button type="button" aria-pressed="'+(state.mode==="short")+'" onclick="App.setMode(\'short\')">'+
+      '<b>'+esc(T("modeShort"))+'</b><span>'+esc(T("modeShortNote"))+'</span></button>'+
+    '<button type="button" aria-pressed="'+(state.mode==="all")+'" onclick="App.setMode(\'all\')">'+
+      '<b>'+esc(T("modeAll"))+'</b><span>'+esc(T("modeAllNote"))+'</span></button>';
+}
+function title(i){ var s=sec(i); return (state.lang==="fr"? s.f.t : s.e.t); }
+function intro(i){ var s=sec(i); return (state.lang==="fr"? s.f.i : s.e.i); }
+
+var MILESTONES=[100,80,50];
+// Milestones are tracked per mode: finishing the short version and finishing
+// the whole binder are two different achievements and both deserve a prompt.
+function checkMilestones(pct){
+  if(!state.meta.milestones) state.meta.milestones=[];
+  var hit=null;
+  for(var i=0;i<MILESTONES.length;i++){
+    var m=MILESTONES[i], key=state.mode+":"+m;
+    if(pct>=m && state.meta.milestones.indexOf(key)<0){
+      state.meta.milestones.push(key);
+      if(hit===null) hit=key;         // announce only the highest newly reached
+    }
+  }
+  if(hit!==null){
+    state.meta.activeMilestone=hit;
+    dismissed.mile=false;
+    save(true,true);
+    renderBanners();
+  }
+}
+function renderProgress(){
+  var o=overall();
+  checkMilestones(o.pct);
+  $("progPct").textContent=o.pct+"%";
+  $("progTxt").textContent=T("complete")+" · "+o.started+"/"+o.sections;
+  var C=2*Math.PI*16;
+  $("ring").setAttribute("stroke-dasharray",(C*o.pct/100).toFixed(1)+" "+C.toFixed(1));
+  $("miniBar").style.width=o.pct+"%";
+  // nav dots without full re-render
+  var btns=$("navList").querySelectorAll("button"), vis=visibleSections();
+  for(var i=0;i<btns.length && i<vis.length;i++){
+    var st=sectionStats(vis[i]), dot=btns[i].querySelector(".navdot");
+    dot.className="navdot "+(st.done===0?"":(st.done>=st.total?"done":"part"));
+  }
+  var opts=$("mobSel").options;
+  for(var j=0;j<opts.length;j++){
+    var idx=parseInt(opts[j].value,10), s2=sectionStats(idx);
+    opts[j].textContent=(j+1)+". "+title(idx)+"  ("+s2.done+"/"+s2.total+")";
+  }
+}
+
+/* ---------- rendering: fields ---------- */
+function fieldHTML(sid, b, val, path){
+  var lab = state.lang==="fr"? b.f : b.e;
+  var hint = b.h ? (state.lang==="fr"? b.h.f : b.h.e) : "";
+  var ph = b.ph ? (state.lang==="fr"? b.ph.f : b.ph.e) : "";
+  var id = "in_"+path.replace(/[^a-z0-9]/gi,"_");
+  var h = '<div class="field'+(b.full?" full":"")+'">';
+  h += '<label for="'+id+'">'+esc(lab)+'</label>';
+  if(hint) h += '<p class="hint">'+hint+'</p>';
+  if(b.t==="textarea"){
+    h += '<textarea class="inp" id="'+id+'" data-path="'+esc(path)+'" rows="3" placeholder="'+esc(ph)+'">'+esc(val)+'</textarea>';
+  } else if(b.t==="select"){
+    h += '<select class="inp" id="'+id+'" data-path="'+esc(path)+'">';
+    for(var i=0;i<b.opts.length;i++){
+      var o=b.opts[i];
+      h += '<option value="'+esc(o.v)+'"'+(String(val)===String(o.v)?" selected":"")+'>'+esc(state.lang==="fr"?o.f:o.e)+'</option>';
+    }
+    h += '</select>';
+  } else {
+    h += '<input class="inp" id="'+id+'" data-path="'+esc(path)+'" type="'+esc(b.t||"text")+'" value="'+esc(val)+'" placeholder="'+esc(ph)+'"'+
+         (b.t==="tel"?' inputmode="tel"':'')+(b.t==="email"?' inputmode="email" autocapitalize="off" spellcheck="false"':'')+'>';
+  }
+  return h+'</div>';
+}
+
+function entryTitle(b, item, idx){
+  var parts=[];
+  if(b.title){
+    for(var i=0;i<b.title.length;i++){
+      var v=item[b.title[i]];
+      if(nonEmpty(v)){
+        var fd=null;
+        for(var j=0;j<b.fields.length;j++){ if(b.fields[j].id===b.title[i]) fd=b.fields[j]; }
+        if(fd && fd.t==="select" && fd.opts){
+          for(var k2=0;k2<fd.opts.length;k2++){ if(String(fd.opts[k2].v)===String(v)) v=(state.lang==="fr"?fd.opts[k2].f:fd.opts[k2].e); }
+        }
+        parts.push(v);
+      }
+    }
+  }
+  if(parts.length) return parts.join(" · ");
+  return (state.lang==="fr"? b.itemF : b.itemE)+" "+(idx+1);
+}
+
+var armedDel=null, delTimer=null;
+function delBtnHTML(sid, lid, i){
+  var armed = (armedDel === sid+"|"+lid+"|"+i);
+  var icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>';
+  return '<button class="del'+(armed?" confirm":"")+'" type="button" title="'+esc(T("remove"))+'" aria-label="'+esc(armed?T("delConfirm"):T("remove"))+'" '+
+    'onclick="App.delItem(\''+sid+'\',\''+lid+'\','+i+')">'+icon+(armed?('<span>'+esc(T("delConfirm"))+'</span>'):'')+'</button>';
+}
+function listHTML(sid, b){
+  var arr = bag(sid)[b.id] || [];
+  var h = '<div class="listwrap">';
+  if(!arr.length){ h += '<p class="empty">'+esc(T("noneYet"))+'</p>'; }
+  for(var i=0;i<arr.length;i++){
+    h += '<div class="entry"><div class="entry-h"><span class="n">'+(i+1)+'</span>'+
+         '<b>'+esc(entryTitle(b,arr[i],i))+'</b>'+
+         delBtnHTML(sid, b.id, i)+
+         '</div><div class="grid2">';
+    for(var j=0;j<b.fields.length;j++){
+      var f=b.fields[j];
+      h += fieldHTML(sid, f, arr[i][f.id]||"", sid+"|"+b.id+"|"+i+"|"+f.id);
+    }
+    h += '</div></div>';
+  }
+  h += '<button class="addbtn" type="button" onclick="App.addItem(\''+sid+'\',\''+b.id+'\')">'+
+       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'+
+       esc(state.lang==="fr"? b.addF : b.addE)+'</button></div>';
+  return h;
+}
+
+/* Short mode renders every essential on one page, grouped by section, so the
+   binder can be finished in a single sitting instead of ten. */
+function renderShort(){
+  $("secEyebrow").textContent = T("modeShort");
+  $("secTitle").textContent = T("shortTitle");
+  $("secIntro").textContent = T("shortIntro");
+  var vis=visibleSections(), h="";
+  for(var k=0;k<vis.length;k++){
+    var s=sec(vis[k]), blocks=visibleBlocks(s), open=false;
+    h += '<div class="grp"><span class="gn">'+(k+1)+'</span>'+esc(title(vis[k]))+'</div>';
+    for(var n=0;n<blocks.length;n++){
+      var b=blocks[n];
+      if(b.k==="note"){
+        if(open){ h+='</div>'; open=false; }
+        h += noteHTML(b);
+      } else if(b.k==="f"){
+        if(!open){ h+='<div class="grid2">'; open=true; }
+        h += fieldHTML(s.id, b, bag(s.id)[b.id]||"", s.id+"|"+b.id);
+      } else if(b.k==="list"){
+        if(open){ h+='</div>'; open=false; }
+        h += listHTML(s.id, b);
+      }
+    }
+    if(open) h+='</div>';
+  }
+  $("secBody").innerHTML=h;
+  autoGrowAll();
+}
+function noteHTML(b){
+  return '<div class="note'+(b.tone==="care"?" care":"")+'">'+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+
+    (b.tone==="care"
+      ? '<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>'
+      : '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>')+
+    '</svg><div>'+(state.lang==="fr"? b.f : b.e)+'</div></div>';
+}
+
+function renderSection(){
+  if(state.mode==="short"){ renderShort(); return; }
+  var i=state.cur, s=sec(i), vis=visibleSections();
+  var pos=vis.indexOf(i);
+  if(pos<0){ pos=0; i=state.cur=vis[0]; s=sec(i); }
+  $("secEyebrow").textContent = "Section "+(pos+1)+" / "+vis.length;
+  $("secTitle").textContent = title(i);
+  $("secIntro").textContent = intro(i);
+
+  var blocks=visibleBlocks(s);
+  var h="", open=false;
+  for(var n=0;n<blocks.length;n++){
+    var b=blocks[n];
+    if(b.k==="note"){
+      if(open){ h+='</div>'; open=false; }
+      h += noteHTML(b);
+    } else if(b.k==="f"){
+      if(!open){ h+='<div class="grid2">'; open=true; }
+      h += fieldHTML(s.id, b, bag(s.id)[b.id]||"", s.id+"|"+b.id);
+    } else if(b.k==="list"){
+      if(open){ h+='</div>'; open=false; }
+      h += listHTML(s.id, b);
+    }
+  }
+  if(open) h+='</div>';
+  $("secBody").innerHTML=h;
+
+  var p=$("prevBtn"), nx=$("nextBtn");
+  p.textContent="← "+T("prev"); p.disabled = (pos===0);
+  nx.textContent=(pos===vis.length-1? T("done") : T("next")+" →"); nx.disabled=(pos===vis.length-1);
+
+  autoGrowAll();
+}
+
+function autoGrowAll(){
+  var tas=$("secBody").querySelectorAll("textarea");
+  for(var i=0;i<tas.length;i++) grow(tas[i]);
+}
+function grow(el){
+  el.style.height="auto";
+  el.style.height=Math.max(88, el.scrollHeight+2)+"px";
+}
+
+/* ---------- static text ---------- */
+function applyStatic(){
+  document.documentElement.lang = state.lang;
+  document.documentElement.setAttribute("data-mode", state.mode);
+  try{ document.title = T("docTitle"); }catch(e){}
+  $("brandSub").textContent = T("brandSub");
+  var nodes=document.querySelectorAll("[data-t]");
+  for(var i=0;i<nodes.length;i++){
+    nodes[i].textContent = T(nodes[i].getAttribute("data-t"));
+  }
+  $("langEn").setAttribute("aria-pressed", state.lang==="en");
+  $("langFr").setAttribute("aria-pressed", state.lang==="fr");
+}
+
+/* ---------- banners ---------- */
+var dismissed = {};
+function renderBanners(){
+  var h="";
+  if(!CAN_STORE){
+    h += banner("stop", T("blockTitle"), T("blockBody"), "");
+  }
+  if(!dismissed.review && reviewDue()){
+    h += banner("warn", T("dueTitle"), T("dueBody"),
+      '<button type="button" onclick="App.markReviewed()">'+esc(T("dueDone"))+'</button>'+
+      '<button type="button" onclick="App.dismiss(\'review\')">'+esc(T("dueLater"))+'</button>');
+  }
+  var mile = state.meta.activeMilestone, acts;
+  if(mile){
+    var parts=String(mile).split(":");
+    var mMode = parts.length>1 ? parts[0] : "all";
+    var m = parseInt(parts[parts.length-1],10);
+    if(mMode==="short" && m===100){
+      // Finishing the short version is the moment the binder first becomes useful.
+      acts='<button type="button" onclick="App.exportJSON()">'+esc(T("mileGo"))+'</button>'+
+           '<button type="button" onclick="App.printBinder()">'+esc(T("shortDonePrint"))+'</button>'+
+           '<button type="button" onclick="App.dismiss(\'mile\');App.setMode(\'all\')">'+esc(T("shortDoneGo"))+'</button>'+
+           '<button type="button" onclick="App.dismiss(\'mile\')">'+esc(T("dueLater"))+'</button>';
+      h += banner("info", T("shortDoneTitle"), T("shortDoneBody"), acts);
+    } else {
+      acts='<button type="button" onclick="App.exportJSON()">'+esc(T("mileGo"))+'</button>';
+      if(m===100){
+        acts+='<button type="button" onclick="App.printBinder()">'+esc(T("milePrint"))+'</button>';
+        acts+='<button type="button" onclick="App.makeICS()">'+esc(T("mileIcs"))+'</button>';
+      }
+      acts+='<button type="button" onclick="App.dismiss(\'mile\')">'+esc(T("dueLater"))+'</button>';
+      h += banner("info", T("mileTitle"+m), T("mileBody"+m), acts);
+    }
+  }
+  if(!mile && !dismissed.backup && backupDue()){
+    h += banner("info", T("bkNudgeTitle"), T("bkNudgeBody"),
+      '<button type="button" onclick="App.exportJSON()">'+esc(T("bkNudgeGo"))+'</button>'+
+      '<button type="button" onclick="App.dismiss(\'backup\')">'+esc(T("dueLater"))+'</button>');
+  }
+  $("banners").innerHTML=h;
+}
+function banner(tone,t,b,acts){
+  var icon = tone==="stop"
+    ? '<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>'
+    : (tone==="warn" ? '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' : '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>');
+  return '<div class="banner '+tone+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icon+'</svg>'+
+    '<div><b>'+esc(t)+'</b>'+esc(b)+(acts?'<div class="act">'+acts+'</div>':'')+'</div></div>';
+}
+function reviewDue(){
+  if(overall().pct < 15) return false;
+  var every = parseInt(bag("start").reviewEvery || "12", 10);
+  var base = state.meta.lastReview || state.meta.firstSaved;
+  if(!base) return false;
+  if(state.meta.snoozeReview && daysSince(state.meta.snoozeReview) < 14) return false;
+  return monthsSince(base) >= every;
+}
+function backupDue(){
+  if(state.meta.edits < 12) return false;
+  if(!state.meta.lastBackup) return true;
+  return daysSince(state.meta.lastBackup) > 30;
+}
+
+/* ---------- toast + modal ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=$("toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove("on"); },2400);
+}
+var lastFocus=null;
+// Only genuinely reachable controls — a hidden file input must never take focus.
+function focusables(box){
+  var all=box.querySelectorAll('button:not([disabled]), [href], input:not([type="hidden"]), select, textarea');
+  var out=[];
+  for(var i=0;i<all.length;i++){
+    var el=all[i];
+    if(el.hidden) continue;
+    if(el.offsetParent===null && getComputedStyle(el).position!=="fixed") continue;
+    out.push(el);
+  }
+  return out;
+}
+function modal(html){
+  if(!$("modalHost").innerHTML) lastFocus = document.activeElement;
+  $("modalHost").innerHTML='<div class="mask" onclick="if(event.target===this)App.closeModal()"><div class="modal" role="dialog" aria-modal="true" tabindex="-1">'+html+'</div></div>';
+  document.body.style.overflow="hidden";
+  var box=$("modalHost").querySelector(".modal");
+  if(box){ var f=focusables(box); (f[0]||box).focus(); }
+}
+function closeModal(){
+  $("modalHost").innerHTML=""; document.body.style.overflow="";
+  if(lastFocus && lastFocus.focus){ try{ lastFocus.focus(); }catch(e){} }
+  lastFocus=null;
+}
+function modalKeys(e){
+  var host=$("modalHost"); if(!host || !host.innerHTML) return;
+  if(e.key==="Escape"){ e.preventDefault(); closeModal(); return; }
+  if(e.key!=="Tab") return;
+  var box=host.querySelector(".modal"); if(!box) return;
+  var f=focusables(box);
+  if(!f.length) return;
+  var first=f[0], last=f[f.length-1];
+  if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+}
+
+/* ---------- search ----------
+   Looks through every section, in the current language, over both the field
+   labels and whatever the owner has typed — including entries inside lists. */
+function hi(text, q){
+  var t=String(text), i=t.toLowerCase().indexOf(q);
+  if(i<0) return esc(t);
+  return esc(t.slice(0,i))+"<mark>"+esc(t.slice(i,i+q.length))+"</mark>"+esc(t.slice(i+q.length));
+}
+function searchAll(q){
+  q=String(q||"").trim().toLowerCase();
+  var res=[];
+  if(q.length<2) return res;
+  for(var i=0;i<SECTIONS.length;i++){
+    var s=SECTIONS[i];
+    for(var n=0;n<s.blocks.length;n++){
+      var b=s.blocks[n];
+      if(b.k==="f"){
+        var lab=state.lang==="fr"?b.f:b.e, val=bag(s.id)[b.id]||"";
+        if(b.t==="select" && nonEmpty(val)) val=optLabel(b,val);
+        if(String(lab).toLowerCase().indexOf(q)>=0 || String(val).toLowerCase().indexOf(q)>=0){
+          res.push({si:i, path:s.id+"|"+b.id, lab:lab, val:val, where:title(i)});
+        }
+      } else if(b.k==="list"){
+        var arr=bag(s.id)[b.id]||[];
+        for(var a=0;a<arr.length;a++){
+          for(var j=0;j<b.fields.length;j++){
+            var f=b.fields[j], fl=state.lang==="fr"?f.f:f.e, fv=arr[a][f.id]||"";
+            if(f.t==="select" && nonEmpty(fv)) fv=optLabel(f,fv);
+            if(String(fl).toLowerCase().indexOf(q)>=0 || String(fv).toLowerCase().indexOf(q)>=0){
+              res.push({si:i, path:s.id+"|"+b.id+"|"+a+"|"+f.id, lab:fl, val:fv,
+                        where:title(i)+" › "+entryTitle(b,arr[a],a)});
+            }
+          }
+        }
+      }
+      if(res.length>60) return res;
+    }
+  }
+  // entries the owner has actually written come before empty field labels
+  res.sort(function(x,y){ return (nonEmpty(y.val)?1:0)-(nonEmpty(x.val)?1:0); });
+  return res;
+}
+function runSearch(q){
+  var host=$("sres"); if(!host) return;
+  var qq=String(q||"").trim().toLowerCase();
+  if(qq.length<2){ host.innerHTML=""; return; }
+  var res=searchAll(qq);
+  if(!res.length){ host.innerHTML='<p class="empty">'+esc(T("searchNone"))+'</p>'; return; }
+  var h="";
+  for(var i=0;i<res.length;i++){
+    var r=res[i];
+    h+='<button class="sresult" type="button" onclick="App.jumpTo('+r.si+',\''+r.path.replace(/'/g,"\\'")+'\')">'+
+       '<span class="lb">'+hi(r.lab,qq)+'</span>'+
+       (nonEmpty(r.val)?('<span class="vl">'+hi(r.val,qq)+'</span>'):'')+
+       '<span class="wh">'+esc(T("searchIn"))+' '+esc(r.where)+'</span></button>';
+  }
+  host.innerHTML=h;
+}
+
+/* ---------- print ---------- */
+function optLabel(f,v){
+  if(!f.opts) return v;
+  for(var i=0;i<f.opts.length;i++) if(String(f.opts[i].v)===String(v)) return state.lang==="fr"?f.opts[i].f:f.opts[i].e;
+  return v;
+}
+function displayVal(f,v){
+  if(f.t==="date") return fmtDate(v);
+  if(f.t==="select") return optLabel(f,v);
+  return v;
+}
+function buildPrint(){
+  var d=state.data, owner = (bag("about").fullName || bag("start").ownerName || "");
+  var h='<div class="p-cover"><h1>In Case</h1><div class="sub">'+esc(T("coverSub"))+'</div>';
+  h+='<div class="who">'+(owner ? esc(owner) : "&nbsp;")+'</div>';
+  h+='<div class="meta">'+esc(T("coverOn"))+': '+esc(fmtDate(iso(today())))+'<br>'+esc(T("coverKeep"))+'</div></div>';
+
+  // Build every section first so the contents page can say what is in the binder.
+  var built=[];
+  for(var i=0;i<SECTIONS.length;i++){
+    var s=sec(i), rows="";
+    for(var n=0;n<s.blocks.length;n++){
+      var b=s.blocks[n];
+      if(b.k==="f"){
+        var v=bag(s.id)[b.id];
+        if(nonEmpty(v)) rows+='<div class="p-row"><div class="k">'+esc(state.lang==="fr"?b.f:b.e)+'</div><div class="v">'+esc(displayVal(b,v))+'</div></div>';
+      } else if(b.k==="list"){
+        var arr=bag(s.id)[b.id]||[];
+        for(var a=0;a<arr.length;a++){
+          var any=false, inner="";
+          for(var j=0;j<b.fields.length;j++){
+            var f=b.fields[j], fv=arr[a][f.id];
+            if(nonEmpty(fv)){ any=true; inner+='<div class="p-row"><div class="k">'+esc(state.lang==="fr"?f.f:f.e)+'</div><div class="v">'+esc(displayVal(f,fv))+'</div></div>'; }
+          }
+          if(any) rows+='<div class="p-item"><div class="t">'+esc(entryTitle(b,arr[a],a))+'</div>'+inner+'</div>';
+        }
+      }
+    }
+    built.push({i:i, rows:rows});
+  }
+
+  // Number the sections that will actually be printed, so the contents page
+  // and the tabs in the binder agree.
+  var num=0;
+  for(var c=0;c<built.length;c++){ built[c].num = built[c].rows ? (++num) : 0; }
+
+  var toc='<div class="p-toc"><h2>'+esc(T("contents"))+'</h2><ul>';
+  for(var c2=0;c2<built.length;c2++){
+    var it=built[c2];
+    toc+='<li><b>'+(it.num? it.num+'.' : '&mdash;')+'</b> <span>'+esc(title(it.i))+'</span>'+
+         (it.num?'':'<em>'+esc(T("contentsNot"))+'</em>')+'</li>';
+  }
+  toc+='</ul></div>';
+  h+=toc;
+
+  for(var d2=0;d2<built.length;d2++){
+    if(!built[d2].rows) continue;              // an empty section gets no page of its own
+    h+='<div class="p-sec"><h2>'+built[d2].num+'. '+esc(title(built[d2].i))+'</h2>'+built[d2].rows+'</div>';
+  }
+  h+='<div class="p-foot">'+esc(T("printFoot"))+'</div>';
+  $("print").innerHTML=h;
+}
+
+/* ---------- backup ---------- */
+function download(name, text, mime){
+  try{
+    var blob=new Blob([text],{type:mime||"application/json"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url; a.download=name; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },1200);
+    return true;
+  }catch(e){ return false; }
+}
+function exportJSON(){
+  var owner=(bag("about").fullName||bag("start").ownerName||"binder").replace(/[^\w\-]+/g,"-").slice(0,40);
+  var payload={ app:"In Case", v:1, exported:new Date().toISOString(), lang:state.lang, data:state.data, meta:state.meta };
+  if(download("in-case-"+owner+"-"+iso(today())+".json", JSON.stringify(payload,null,2))){
+    state.meta.lastBackup=new Date().toISOString();
+    state.meta.activeMilestone=null;
+    dismissed.backup=true; save(true); renderBanners(); toast(T("toastExport"));
+  }
+}
+function importJSON(file){
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var o=JSON.parse(r.result);
+      if(!o||typeof o!=="object"||!o.data) throw 0;
+      state.data=o.data;
+      if(o.meta&&typeof o.meta==="object"){ for(var k in state.meta){ if(k in o.meta) state.meta[k]=o.meta[k]; } }
+      if(o.lang==="fr"||o.lang==="en") state.lang=o.lang;
+      save(true); closeModal(); renderAll(); toast(T("toastImport"));
+    }catch(e){ toast(T("toastBadFile")); }
+  };
+  r.onerror=function(){ toast(T("toastBadFile")); };
+  r.readAsText(file);
+}
+function pad(n){ return n<10?"0"+n:""+n; }
+function icsDate(d){ return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+"T090000Z"; }
+function makeICS(){
+  var every=parseInt(bag("start").reviewEvery||"12",10);
+  var start=new Date(); start.setMonth(start.getMonth()+every);
+  var uid="incase-"+Date.now()+"@dreamstodone";
+  var sum = state.lang==="fr" ? "Relire mon classeur In Case" : "Review my In Case binder";
+  var desc= state.lang==="fr"
+    ? "Ouvrez votre classeur In Case, verifiez que tout est a jour, puis telechargez une nouvelle sauvegarde."
+    : "Open your In Case binder, check everything is still true, then download a fresh backup.";
+  var ics=[
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//DreamsToDone//In Case//EN","CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+icsDate(new Date()),"DTSTART:"+icsDate(start),
+    "RRULE:FREQ=MONTHLY;INTERVAL="+every,
+    "SUMMARY:"+sum,"DESCRIPTION:"+desc,
+    "BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:"+sum,"END:VALARM",
+    "END:VEVENT","END:VCALENDAR"
+  ].join("\r\n");
+  if(download("in-case-review-reminder.ics", ics, "text/calendar")) toast(T("toastIcs"));
+}
+
+/* ---------- theme ---------- */
+function currentTheme(){
+  return state.theme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark":"light");
+}
+function applyPalette(){
+  var p = PALETTES[state.palette] || PALETTES.butter;
+  var setv = p[currentTheme()], root=document.documentElement;
+  for(var k in setv){ if(Object.prototype.hasOwnProperty.call(setv,k)) root.style.setProperty("--"+k, setv[k]); }
+}
+function applyTheme(){
+  var t = currentTheme();
+  document.documentElement.setAttribute("data-theme", t);
+  applyPalette();
+  $("themeIcon").innerHTML = t==="dark"
+    ? '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M2 12h2.5M19.5 12H22M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/>'
+    : '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>';
+}
+
+/* ---------- events ---------- */
+function onInput(e){
+  var el=e.target, path=el.getAttribute && el.getAttribute("data-path");
+  if(!path) return;
+  var p=path.split("|");
+  if(p.length===2){ bag(p[0])[p[1]] = el.value; }
+  else if(p.length===4){
+    var arr=bag(p[0])[p[1]]; if(!arr) return;
+    var item=arr[parseInt(p[2],10)]; if(!item) return;
+    item[p[3]] = el.value;
+    // refresh the entry heading live
+    var entry = el.closest ? el.closest(".entry") : null;
+    if(entry){
+      var b=findList(p[0],p[1]);
+      var bEl=entry.querySelector(".entry-h b");
+      if(b&&bEl) bEl.textContent = entryTitle(b, item, parseInt(p[2],10));
+    }
+  }
+  if(!state.meta.firstSaved) state.meta.firstSaved=new Date().toISOString();
+  state.meta.edits = (state.meta.edits||0)+1;
+  if(el.tagName==="TEXTAREA") grow(el);
+  renderProgress();
+  save();
+  clearTimeout(printTimer);
+  printTimer=setTimeout(buildPrint, 1500);
+}
+function findList(sid, lid){
+  var s=null;
+  for(var i=0;i<SECTIONS.length;i++) if(SECTIONS[i].id===sid) s=SECTIONS[i];
+  if(!s) return null;
+  for(var n=0;n<s.blocks.length;n++) if(s.blocks[n].k==="list" && s.blocks[n].id===lid) return s.blocks[n];
+  return null;
+}
+
+/* ---------- public API ---------- */
+var App = {
+  go:function(i){
+    state.cur=parseInt(i,10)||0;
+    renderNav(); renderSection(); renderProgress();
+    if(window.scrollY>140) window.scrollTo({top:0,behavior:"smooth"});
+  },
+  step:function(d){
+    var vis=visibleSections(), pos=vis.indexOf(state.cur)+d;
+    if(pos<0||pos>=vis.length) return;
+    App.go(vis[pos]);
+  },
+  startMode:function(m){ closeModal(); App.setMode(m); },
+  setMode:function(m){
+    state.mode = (m==="all")?"all":"short";
+    var vis=visibleSections();
+    if(vis.indexOf(state.cur)<0) state.cur=vis[0];
+    save(true,true); applyStatic(); renderNav(); renderSection(); renderProgress(); renderBanners();
+    window.scrollTo({top:0, behavior:"smooth"});
+  },
+  addItem:function(sid,lid){
+    var b=findList(sid,lid); if(!b) return;
+    var arr=bag(sid)[lid]; if(!arr){ arr=[]; bag(sid)[lid]=arr; }
+    var o={}; for(var i=0;i<b.fields.length;i++) o[b.fields[i].id]="";
+    arr.push(o); save(); renderSection(); renderProgress();
+    var entries=$("secBody").querySelectorAll(".entry");
+    if(entries.length){
+      var last=entries[entries.length-1], first=last.querySelector(".inp");
+      if(first) first.focus();
+    }
+  },
+  delItem:function(sid,lid,i){
+    var arr=bag(sid)[lid]; if(!arr||!arr[i]) return;
+    var b=findList(sid,lid), hasContent=false;
+    if(b){ for(var j=0;j<b.fields.length;j++){ if(nonEmpty(arr[i][b.fields[j].id])) hasContent=true; } }
+    var key=sid+"|"+lid+"|"+i;
+    // An entry with something in it asks once. An empty one just goes.
+    if(hasContent && armedDel!==key){
+      armedDel=key; renderSection();
+      clearTimeout(delTimer);
+      delTimer=setTimeout(function(){ armedDel=null; renderSection(); }, 4000);
+      return;
+    }
+    clearTimeout(delTimer); armedDel=null;
+    arr.splice(i,1); save(); renderSection(); renderProgress();
+  },
+  setLang:function(l){
+    state.lang = (l==="fr")?"fr":"en";
+    save(true, true); applyStatic(); renderNav(); renderSection(); renderProgress(); renderBanners();
+  },
+  setTheme:function(t){
+    state.theme = (t==="light"||t==="dark") ? t : null;
+    applyTheme(); save(true,true); App.openPalette();
+  },
+  toggleTheme:function(){
+    var cur=document.documentElement.getAttribute("data-theme");
+    state.theme = (cur==="dark")?"light":"dark";
+    applyTheme(); save(true, true);
+  },
+  dismiss:function(what){
+    dismissed[what]=true;
+    if(what==="review"){ state.meta.snoozeReview=new Date().toISOString(); save(true,true); }
+    if(what==="mile"){ state.meta.activeMilestone=null; save(true,true); }
+    renderBanners();
+  },
+  markReviewed:function(){
+    state.meta.lastReview=new Date().toISOString();
+    state.meta.snoozeReview=null;
+    dismissed.review=true; save(true); renderBanners(); toast(T("toastSaved"));
+  },
+  openSearch:function(){
+    modal('<div class="modal-h"><h3>'+esc(T("searchTitle"))+'</h3></div>'+
+      '<div class="modal-b"><input class="inp searchbox" id="sq" type="search" autocomplete="off" placeholder="'+esc(T("searchPh"))+'">'+
+      '<div class="sresults" id="sres"></div></div>'+
+      '<div class="modal-f"><button type="button" onclick="App.closeModal()">'+esc(T("bkClose"))+'</button></div>');
+    var box=$("sq");
+    box.addEventListener("input", function(){ runSearch(box.value); });
+    box.focus();
+    runSearch("");
+  },
+  jumpTo:function(si, path){
+    closeModal();
+    var vis=visibleSections();
+    // A hit can live in a section the short version hides — show everything so it can be reached.
+    if(vis.indexOf(si)<0){ state.mode="all"; save(true,true); renderNav(); }
+    state.cur=si; renderNav(); renderSection(); renderProgress();
+    setTimeout(function(){
+      var el=document.querySelector('[data-path="'+path.replace(/"/g,'\\"')+'"]');
+      if(el){
+        el.scrollIntoView({block:"center", behavior:"smooth"});
+        el.classList.add("hit");
+        try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); }
+        setTimeout(function(){ el.classList.remove("hit"); }, 1800);
+      }
+    }, 60);
+  },
+  openPalette:function(){
+    var cards="";
+    for(var i=0;i<PALETTE_ORDER.length;i++){
+      var id=PALETTE_ORDER[i], p=PALETTES[id], sw="";
+      for(var c=0;c<p.chips.length;c++) sw+='<i style="background:'+p.chips[c]+'"></i>';
+      cards+='<button class="palcard" type="button" aria-pressed="'+(state.palette===id)+'" onclick="App.setPalette(\''+id+'\')">'+
+        '<span class="sw">'+sw+'</span>'+
+        '<span class="nm">'+esc(state.lang==="fr"?p.nm.f:p.nm.e)+(state.palette===id?' <span class="tick">&#10003;</span>':'')+'</span>'+
+        '<span class="ds">'+esc(state.lang==="fr"?p.ds.f:p.ds.e)+'</span></button>';
+    }
+    var th=state.theme, seg=
+      '<div class="seg" role="group" aria-label="'+esc(T("palTheme"))+'">'+
+      '<button type="button" aria-pressed="'+(th==="light")+'" onclick="App.setTheme(\'light\')">'+esc(T("themeLight"))+'</button>'+
+      '<button type="button" aria-pressed="'+(th==="dark")+'" onclick="App.setTheme(\'dark\')">'+esc(T("themeDark"))+'</button>'+
+      '<button type="button" aria-pressed="'+(!th)+'" onclick="App.setTheme(null)">'+esc(T("themeAuto"))+'</button></div>';
+    modal('<div class="modal-h"><h3>'+esc(T("palTitle"))+'</h3></div>'+
+      '<div class="modal-b"><label class="seglab">'+esc(T("palTheme"))+'</label>'+seg+
+      '<p>'+esc(T("palBody"))+'</p><div class="palgrid">'+cards+'</div></div>'+
+      '<div class="modal-f"><button class="go" type="button" onclick="App.closeModal()">'+esc(T("bkClose"))+'</button></div>');
+  },
+  setPalette:function(id){
+    if(!PALETTES[id]) return;
+    state.palette=id; applyPalette(); save(true,true);
+    App.openPalette();
+  },
+  openBackup:function(){
+    modal(
+      '<div class="modal-h"><h3>'+esc(T("bkTitle"))+'</h3></div>'+
+      '<div class="modal-b"><p>'+esc(T("bkBody"))+'</p>'+
+      '<input type="file" id="impFile" accept="application/json,.json" hidden>'+
+      '</div>'+
+      '<div class="modal-f">'+
+        '<button class="go" type="button" onclick="App.exportJSON()">'+esc(T("bkExport"))+'</button>'+
+        '<button type="button" onclick="document.getElementById(\'impFile\').click()">'+esc(T("bkImport"))+'</button>'+
+      '</div>'+
+      '<div class="modal-f" style="padding-top:0">'+
+        '<button type="button" onclick="App.makeICS()">'+esc(T("bkIcs"))+'</button>'+
+        '<button type="button" onclick="App.confirmReset()">'+esc(T("bkReset"))+'</button>'+
+      '</div>'+
+      '<div class="modal-f" style="padding-top:0">'+
+        '<button type="button" onclick="App.closeModal()">'+esc(T("bkClose"))+'</button>'+
+      '</div>'
+    );
+    $("impFile").addEventListener("change", function(){
+      if(this.files && this.files[0]){
+        var f=this.files[0];
+        modal('<div class="modal-h"><h3>'+esc(T("imTitle"))+'</h3></div><div class="modal-b"><p>'+esc(T("imBody"))+'</p></div>'+
+          '<div class="modal-f"><button class="go" type="button" id="doImp">'+esc(T("imGo"))+'</button>'+
+          '<button type="button" onclick="App.closeModal()">'+esc(T("imNo"))+'</button></div>');
+        $("doImp").addEventListener("click", function(){ importJSON(f); });
+      }
+    });
+  },
+  confirmReset:function(){
+    modal('<div class="modal-h"><h3>'+esc(T("rsTitle"))+'</h3></div><div class="modal-b"><p>'+esc(T("rsBody"))+'</p></div>'+
+      '<div class="modal-f"><button class="bad" type="button" onclick="App.reset()">'+esc(T("rsGo"))+'</button>'+
+      '<button type="button" onclick="App.closeModal()">'+esc(T("rsNo"))+'</button></div>');
+  },
+  reset:function(){
+    state.data={};
+    state.meta={ firstSaved:null, lastReview:null, lastBackup:null, edits:0, seenWelcome:true, snoozeReview:null, milestones:[], activeMilestone:null };
+    dismissed={};
+    try{ if(CAN_STORE) localStorage.removeItem(KEY); }catch(e){}
+    save(true); closeModal(); state.cur=0; renderAll(); toast(T("toastReset"));
+  },
+  exportJSON:exportJSON,
+  makeICS:makeICS,
+  closeModal:closeModal,
+  printBinder:function(){ buildPrint(); setTimeout(function(){ window.print(); }, 60); }
+};
+window.App = App;
+
+/* ---------- welcome ---------- */
+function welcome(){
+  modal('<div class="modal-h"><h3>'+esc(T("welcomeTitle"))+'</h3></div>'+
+    '<div class="modal-b"><p>'+esc(T("welcomeBody"))+'</p></div>'+
+    '<div class="modal-f">'+
+      '<button class="go" type="button" onclick="App.startMode(\'short\')">'+esc(T("welcomeShort"))+'</button>'+
+      '<button type="button" onclick="App.startMode(\'all\')">'+esc(T("welcomeAll"))+'</button>'+
+    '</div>');
+  state.meta.seenWelcome=true; save(true, true);
+}
+
+/* ---------- boot ---------- */
+function renderAll(){
+  applyStatic(); applyTheme(); renderNav(); renderSection(); renderProgress(); renderBanners();
+}
+/* Fictional sample binder — everything invented, no real people or institutions.
+   Used only by the demo build for screenshots. */
+function seedDemo(){
+  state.mode="all"; state.lang = (state.lang==="fr")?"fr":"en";
+  state.meta.seenWelcome=true;
+  state.meta.milestones=["short:50","short:80","short:100","all:50","all:80"];
+  state.meta.activeMilestone=null;
+  var d=state.data;
+  d.start={ ownerName:"Eleanor Marlowe", startedOn:"2026-03-12",
+    binderWhere:"Top drawer of the study desk, in the grey folder marked “Important”. A copy is with our solicitor.",
+    whoKnows:"My husband James, and my sister Priya. Both know where this binder is kept.",
+    reviewEvery:"12" };
+  d.about={ fullName:"Eleanor Jane Marlowe", otherNames:"Eleanor Whitfield (maiden name)",
+    dob:"1968-06-04", birthPlace:"Bristol", address:"14 Elm Row, Northbank, NB4 7QP",
+    phone:"07700 900 118", email:"eleanor.marlowe@example.com",
+    idDocsWhere:"Passport and driving licence in the fireproof box in the wardrobe. Birth certificate in the study folder.",
+    employer:"Northbank Community Library", employerContact:"Sandra Ellis, branch manager — 01xxx 900 240" };
+  d.people={ contacts:[
+    {name:"James Marlowe", relationship:"Husband", phone:"07700 900 201", phone2:"", email:"james.m@example.com",
+      notes:"Tell him in person if at all possible. He has a key to everything."},
+    {name:"Priya Anand", relationship:"Sister", phone:"07700 900 447", phone2:"", email:"priya@example.com",
+      notes:"She knows where this binder is and can help James with the paperwork."},
+    {name:"Dr. Amara Okafor", relationship:"Family doctor", phone:"01xxx 900 300", phone2:"", email:"",
+      notes:"The surgery on Mill Lane — they hold my full medical history."}
+  ], callOrderNote:"James first, then Priya. Please don't tell my mother by phone — Priya will go round." };
+  d.home={ homeStatus:"mortgage", landlord:"Northbank Building Society (mortgage)", landlordPhone:"01xxx 900 500",
+    keysWhere:"Spare set with Priya, and one with the Hendersons next door at no. 16.",
+    alarmWhere:"The alarm code is written inside the fuse-box cover in the hall cupboard.",
+    neighbour:"The Hendersons, no. 16", neighbourPhone:"07700 900 662",
+    utilities:[
+      {service:"Electricity & gas", supplier:"Northbank Energy", phone:"0800 900 700", refWhere:"Bills in the kitchen drawer"},
+      {service:"Broadband", supplier:"Fibrelink", phone:"0800 900 710", refWhere:"Account number on the router label"}
+    ],
+    houseQuirks:"Water stopcock is under the stairs. The boiler needs a hard reset (hold the red button 10s) if the heating dies. Bins out Tuesday night." };
+  d.pets={ pets:[
+    {name:"Biscuit", species:"Cat (ginger tabby)", vet:"Mill Lane Vets", vetPhone:"01xxx 900 810",
+      routine:"Half a pouch morning and night. Tablets for his thyroid every morning, hidden in a treat.",
+      whoTakes:"Priya has said she'll take him.", chipWhere:"Microchip & insurance papers in the study folder."}
+  ]};
+  d.money={ banks:[
+    {institution:"Northbank Building Society", kind:"current", phone:"0800 900 900", docsWhere:"Statements in the study folder"},
+    {institution:"Meridian Savings", kind:"savings", phone:"0800 900 905", docsWhere:"Passbook in the fireproof box"}
+  ], policies:[
+    {type:"life", provider:"Guardian Mutual", phone:"0800 900 920", docsWhere:"Policy in the study folder",
+      notes:"Pays out to James. Policy covers the remaining mortgage."},
+    {type:"home", provider:"Northbank Energy Home Cover", phone:"0800 900 925", docsWhere:"With the other policies", notes:""}
+  ],
+    pensionsWhere:"Teachers' pension from my years at St. Aidan's, and a small private pension with Meridian. Statements in the study folder.",
+    regularPayments:"Direct debits: energy, broadband, council tax, two charities (£10/month each), and Biscuit's insurance.",
+    accountant:"", accountantPhone:"" };
+  d.medical={ gp:"Dr. Amara Okafor, Mill Lane Surgery", gpPhone:"01xxx 900 300",
+    pharmacy:"Mill Lane Pharmacy", pharmacyPhone:"01xxx 900 305", bloodType:"O+",
+    allergies:"Penicillin — brings me out in a rash. Nothing else known.",
+    conditions:"Underactive thyroid, well managed.",
+    medications:"Levothyroxine, one tablet each morning. A photo of the packet is in the printed binder.",
+    specialists:[], directiveWhere:"I have not written an advance directive yet — this is on my list.",
+    organDonor:"registered" };
+  d.legal={ willWhere:"Original will is held by our solicitor (see below). A copy is in the study folder.",
+    solicitor:"Harper & Wole Solicitors, Northbank", solicitorPhone:"01xxx 900 610",
+    executor:"James Marlowe, with Priya Anand as second executor", executorPhone:"07700 900 201",
+    poaWho:"James Marlowe holds power of attorney", poaWhere:"The signed papers are with the solicitor.",
+    deedsWhere:"House deeds are with the building society. Car documents (V5C) in the study folder.",
+    certsWhere:"Marriage certificate and both birth certificates in the fireproof box." };
+  d.digital={ pwManager:"Keyholder", pwWhere:"James has emergency access set up. The recovery sheet is in the fireproof box.",
+    devicesWhere:"My phone and laptop unlock notes are in the sealed envelope in the fireproof box — James knows.",
+    accounts:[
+      {service:"Email (main)", username:"eleanor.marlowe@example.com", what:"keep", notes:"Everything else resets through this — deal with it first."},
+      {service:"Photo storage", username:"eleanor.marlowe@example.com", what:"download", notes:"Please download the family photos before anything is closed."},
+      {service:"Online shopping", username:"eleanor.m@example.com", what:"close", notes:""}
+    ],
+    subs:[
+      {service:"Streaming (film)", cost:"£9/month", billing:"monthly", cancel:"Cancel in account settings"},
+      {service:"Newspaper (digital)", cost:"£60/year", billing:"annual", cancel:"Phone the number on the last invoice"}
+    ]};
+  d.wishes={ serviceType:"cremation",
+    serviceNotes:"Nothing formal or gloomy. Somewhere with big windows. Wear colour, please — no black.",
+    music:"Something of Nina Simone to come in to. “Here Comes the Sun” at the end.",
+    readings:"The Mary Oliver poem in my bedside drawer.",
+    restingPlace:"Scatter me at Coombe Hill, where we walked every anniversary.",
+    invite:"Do tell the old library crowd, and my friend Margaret in Canada (number with Priya).",
+    belongings:"My grandmother's ring to Priya. The blue vase to Margaret. The books — let the grandchildren choose.",
+    charities:"The local hospice, if people would like to.",
+    messages:[
+      {toWho:"James", body:"Thank you for all of it. Don't rattle around that house on your own — go and see people."},
+      {toWho:"The grandchildren", body:"Be kind, be brave, and read everything you can get your hands on."}
+    ],
+    lettersWhere:"There are letters for each of them in the bottom drawer of my dresser, in the wooden box." };
+  d.where={ places:[
+    {item:"Fireproof box", location:"Bottom of the wardrobe, my side", access:"James; Priya knows too", notes:"IDs, certificates, recovery sheets"},
+    {item:"Study folder (grey, “Important”)", location:"Top drawer of the study desk", access:"James, Priya", notes:"Most of the everyday paperwork"},
+    {item:"Jewellery", location:"The wooden box on the dresser", access:"James", notes:"The ring for Priya is in the small pouch"}
+  ],
+    storageUnit:"", finalNotes:"The good scissors live in the kitchen drawer, not the study. You're welcome." };
+  save(true, true);
+}
+
+function boot(){
+  var hadSaved = false;
+  try{ hadSaved = CAN_STORE && !!localStorage.getItem(KEY); }catch(e){}
+  load();
+  seedSelectDefaults();
+  if(DEMO && !hadSaved){ seedDemo(); hadSaved=true; }
+  // First open only: apply the build's default language.
+  if(!hadSaved){
+    if(DEFAULT_LANG==="fr" || DEFAULT_LANG==="en"){
+      state.lang = DEFAULT_LANG;
+    } else {
+      var nav = (navigator.language || navigator.userLanguage || "").toLowerCase();
+      state.lang = (nav.indexOf("fr")===0) ? "fr" : "en";
+    }
+  }
+  if(!state.theme && !CAN_STORE) state.theme=null;
+  renderAll();
+  document.getElementById("secBody").addEventListener("input", onInput, false);
+  document.getElementById("secBody").addEventListener("change", onInput, false);
+  document.addEventListener("keydown", modalKeys, false);
+  // Safari does not always fire beforeprint, so keep the print copy warm as well
+  window.addEventListener("beforeprint", buildPrint);
+  buildPrint();
+  if(window.matchMedia){
+    var mq=window.matchMedia("(prefers-color-scheme: dark)");
+    if(mq.addEventListener) mq.addEventListener("change", function(){ if(!state.theme) applyTheme(); });
+  }
+  if(!state.meta.seenWelcome) setTimeout(welcome, 350);
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+})();
+</script>
+<script>
+/* Register the service worker so the binder installs and works offline.
+   Guarded so the plain downloadable file (opened from disk) never errors. */
+(function(){
+  if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('./sw.js').catch(function(){});
+    });
+  }
+})();
+</script>
+</body>
+</html>
